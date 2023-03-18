@@ -34,7 +34,7 @@ const lawyerSchema = new mongoose.Schema(
       data: String,
       default: "",
     },
-    usseenNotification: {
+    unseenNotifications: {
       type: Array,
       default: [],
     },
@@ -49,6 +49,10 @@ const lawyerSchema = new mongoose.Schema(
     availabilityStatus: {
       type: Boolean,
       default: true,
+    },
+    timings: {
+      type: Array,
+      default: [],
     },
   },
   {

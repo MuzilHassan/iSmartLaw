@@ -7,9 +7,12 @@ const connectDb = require("./config/dbConfig");
 const clientRouter = require("./routes/clientsrouter");
 const lawyerRouter = require("./routes/lawyerRouter");
 const complaintRouter = require("./routes/complaintRouter");
+const bookingRouter = require("./routes/bookingRouter");
 app.use("/api/client", clientRouter);
 app.use("/api/lawyer", lawyerRouter);
 app.use("/api/complaint", complaintRouter);
+app.use("/api/bookings", bookingRouter);
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`app is listening on port ${port}`);

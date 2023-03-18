@@ -92,7 +92,10 @@ const LawyersDashboard = ({ children }) => {
           <div>
             <Link1 to={"/notifications"} style={{ textDecoration: "none" }}>
               <i className=" px-3">
-                <Badge badgeContent={4} color="success">
+                <Badge
+                  badgeContent={user?.unseenNotifications.length}
+                  color="success"
+                >
                   <img src={bell} alt="" />
                 </Badge>
               </i>

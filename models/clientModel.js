@@ -33,7 +33,7 @@ const clientSchema = new mongoose.Schema(
       data: String,
       default: "",
     },
-    usseenNotification: {
+    unseenNotifications: {
       type: Array,
       default: [],
     },

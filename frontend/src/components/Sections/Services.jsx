@@ -6,10 +6,11 @@ import ClientSlider from "../Elements/ClientSlider";
 import ServiceBox from "../Elements/ServiceBox";
 import FullButton from "../Buttons/FullButton";
 // Assets
-
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Services() {
   const navigate= useNavigate();
+  const { user } = useSelector((state) => state.user);
   return (
     <Wrapper id="services">
       <div className="lightBg" style={{ padding: "50px 0" }}>
@@ -63,6 +64,8 @@ export default function Services() {
         </div>
         <div className="lightBg " id="registerButtons">
     <div className="container">
+      {!user&&
+
       <Advertising className="flexSpaceCenter">
         <AddLeft>
           
@@ -83,6 +86,7 @@ export default function Services() {
         </AddLeft>
         
       </Advertising>
+      }
     </div>
   </div>
   

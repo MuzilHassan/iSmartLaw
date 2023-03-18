@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-scroll";
+import { Link as L } from "react-router-dom";
 // Components
 import Sidebar from "../Nav/Sidebar";
 import Backdrop from "../Elements/Backdrop";
 // Assets
 import LogoIcon from "../../assets/svg/Logo.jpeg";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
+import { setUser } from "../../redux/userSlice";
 
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
+  const { user } = useSelector((state) => state.user);
   const [sidebarOpen, toggleSidebar] = useState(false);
+ 
+  
 
   useEffect(() => {
+    
     window.addEventListener("scroll", () => setY(window.scrollY));
     return () => {
       window.removeEventListener("scroll", () => setY(window.scrollY));
     };
+   
+
   }, [y]);
 
+  const HandleLogout=()=>{
+    localStorage.clear();
+    useDispatch(setUser(undefined))
+  }
+ 
 
   return (
     <>
@@ -58,15 +72,25 @@ export default function TopNavbar() {
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
           <li className="semiBold font15 pointer">
+          {user? <L activeClass="active" style={{ padding: "10px 15px" }} to="/" spy={true} smooth={true} offset={-80}>
+                  {user.name}
+               </L>:
           <Link activeClass="active" style={{ padding: "10px 15px" }} to="loginButtons" spy={true} smooth={true} offset={-80}>
-                Login
+               Login
               </Link>
+}
             </li>
             <li className="semiBold font15 pointer flexCenter">
+            {user? <L activeClass="active" style={{ padding: "10px 15px" }} to="/" spy={true} smooth={true} offset={-80} onClick={HandleLogout}>
+                  Logout
+               </L>:
+           
             <Link activeClass="active" style={{ padding: "10px 15px" }} to="registerButtons" spy={true} smooth={true} offset={-80}>
                 Register
               </Link>
+}
             </li>
+
           </UlWrapperRight>
         </NavInner>
       </Wrapper>

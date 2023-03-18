@@ -9,7 +9,7 @@ import LawyerSignUp from "./Pages/LawyerSignupScreen";
 import LawyerLogin from "./Pages/LawyerLoginScreen";
 import Landing from "./Pages/Landing";
 import LawyersDashboard from "./components/LawyersDashboard";
-import ProtectedRoute from "./components/ProtectedRoutes";
+import LawyerProtectedRoutes from "./components/LawyerProtectedRoutes";
 import LawyerHome from "./Pages/LawyerHome";
 import Notifications from "./components/Notifications";
 import AdminDashobard from "./components/AdminDashobard";
@@ -18,6 +18,7 @@ import AdminLawyer from "./Pages/AdminLawyer";
 import AdminJudge from "./Pages/AdminJudge";
 import AddAdmin from "./Pages/AddAdmin";
 import AdminHome from "./Pages/AdminHome";
+import ProtectedRoute from "./components/ProtectedRoutes";
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -44,10 +45,23 @@ function App() {
           <Route path="/clientSignup" element={<ClientSignUp />} />
           <Route path="/clientSignIn" element={<ClientSignIn />} />
           <Route path="/" element={<Landing />} />
-          <Route path="/LawyerHome" element={<LawyerHome />} />
+          <Route
+            path="/LawyerHome"
+            element={
+              <LawyerProtectedRoutes>
+                <LawyerHome />
+              </LawyerProtectedRoutes>
+            }
+          />
           <Route path="/admin" element={<AdminDashobard />} />
-          <Route path="/lawyersDashboard" element={<LawyersDashboard />} />
-          <Route path="/notifications" element={<Notifications />} />
+          <Route
+            path="/notifications"
+            element={
+              <LawyerProtectedRoutes>
+                <Notifications />
+              </LawyerProtectedRoutes>
+            }
+          />
           <Route path="/AdminClient" element={<AdminClients />} />
           <Route path="/AdminLawyer" element={<AdminLawyer />} />
           <Route path="/AdminJudge" element={<AdminJudge />} />

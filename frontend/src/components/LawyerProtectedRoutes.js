@@ -6,15 +6,16 @@ import axios from "axios";
 import { setUser } from "../redux/userSlice";
 import { showLoading, hideLoading } from "../redux/alertSlice";
 
-function ProtectedRoute(props) {
+function LawyerProtectedRoutes(props) {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(user);
   const getUser = async () => {
     try {
       dispatch(showLoading());
       const response = await axios.post(
-        "/api/client/get-user-info",
+        "/api/lawyer/get-Lawyer-info",
         { token: localStorage.getItem("token") },
 
         {
@@ -29,12 +30,12 @@ function ProtectedRoute(props) {
         dispatch(setUser(response.data.data));
       } else {
         localStorage.clear();
-        navigate("/clientSignup");
+        navigate("/lawyerSignIn");
       }
     } catch (error) {
       dispatch(hideLoading());
       localStorage.clear();
-      navigate("/clientSignup");
+      navigate("/lawyerSignIn");
     }
   };
 
@@ -47,7 +48,7 @@ function ProtectedRoute(props) {
   if (localStorage.getItem("token")) {
     return props.children;
   } else {
-    return <Navigate to="/clientSignup" />;
+    return <Navigate to="/" />;
   }
 }
-export default ProtectedRoute;
+export default LawyerProtectedRoutes;

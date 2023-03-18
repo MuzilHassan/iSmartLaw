@@ -12,9 +12,10 @@ import ProjectImg4 from "../../assets/img/projects/4.jpg";
 import ProjectImg5 from "../../assets/img/projects/5.png";
 import ProjectImg6 from "../../assets/img/projects/6.png";
 import AddImage2 from "../../assets/img/add/add2.png";
-
+import {  useSelector } from "react-redux";
 export default function Projects() {
   const navigate= useNavigate();
+  const { user } = useSelector((state) => state.user);
   return (
     <Wrapper id="lawyers">
       <div className="whiteBg">
@@ -90,6 +91,8 @@ export default function Projects() {
       </div>
       <div className="lightBg" id="loginButtons">
         <div className="container">
+          {!user&&
+
           <Advertising className="flexSpaceCenter">
             <AddRight>
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
@@ -105,6 +108,7 @@ export default function Projects() {
               </ButtonsRow>
             </AddRight>
           </Advertising>
+          }
         </div>
       </div>
     </Wrapper>

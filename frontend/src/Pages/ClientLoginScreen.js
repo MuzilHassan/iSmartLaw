@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { Link as ml } from "@mui/material/Link";
+import { useDispatch } from "react-redux";
 import { Link as Link1 } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -16,8 +17,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+
 import { showLoading, hideLoading } from "../redux/alertSlice";
+
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -54,7 +56,6 @@ export default function SignIn() {
       password: "",
     },
     onSubmit: async (values, helpers) => {
-      console.log(values);
       try {
         try {
           dispatch(showLoading());
@@ -64,6 +65,7 @@ export default function SignIn() {
             toast.success(response.data.message);
             toast("Redirecting to home page");
             localStorage.setItem("token", response.data.data);
+            console.log(response.data.data);
             navigate("/");
           } else {
             toast.error(response.data.message);

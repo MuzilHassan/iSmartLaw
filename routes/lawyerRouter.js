@@ -3,6 +3,7 @@ const router = express.Router();
 const lawyerModel = require("../models/lawyerModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
 router.post("/register", async (req, res) => {
   try {
     console.log(req.body);
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      res
+      return res
         .status(200)
         .send({ message: "Login successful", success: true, data: token });
     }
@@ -58,4 +59,66 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/get-Lawyer-info", authMiddleware, async (req, res) => {
+  try {
+    console.log(req.body.userId);
+    const user = await lawyerModel.findOne({ _id: req.body.userId });
+    console.log(user);
+    if (!user) {
+      res.status(200).send({ message: "Auth failed", success: false });
+    }
+
+    return res.status(200).send({
+      success: true,
+      data: {
+        name: user.name,
+        email: user.email,
+        unseenNotifications: user.unseenNotifications,
+        seenNotification: user.seenNotification,
+      },
+    });
+  } catch (error) {
+    res.status(400).send({ success: false, message: "failed", error });
+  }
+});
+
+router.post("/mark-all-as-seen", authMiddleware, async (req, res) => {
+  const id = req.body.userId;
+  try {
+    const user = await lawyerModel.findById(id);
+
+    if (!user) {
+      return res.status(200).send({ success: false, message: "failed", error });
+    }
+    const unseenNotifications = user.unseenNotifications;
+    const seenNotification = user.seenNotification;
+    seenNotification.push(...unseenNotifications);
+    user.unseenNotifications = [];
+    user.seenNotification = seenNotification;
+
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "All notifications marked as seen",
+    });
+  } catch (err) {
+    res.status(400).send({ success: true, message: err.message });
+  }
+});
+
+router.post("/delete-all-notifications", authMiddleware, async (req, res) => {
+  const id = req.body.userId;
+  try {
+    const user = await lawyerModel.findById(id);
+
+    if (!user) {
+      return res.status(200).send({ success: false, message: "failed", error });
+    }
+    user.seenNotification = [];
+    await user.save();
+    res.status(200).send({ success: true, message: "deleted Successfully" });
+  } catch (err) {
+    res.status(400).send({ success: true, message: err.message });
+  }
+});
 module.exports = router;
