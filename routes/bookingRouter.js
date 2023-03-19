@@ -4,6 +4,7 @@ const bookingModel = require("../models/bookingModel");
 const lawyerModel = require("../models/lawyerModel");
 const clientModel = require("../models/clientModel");
 const uuid = require("uuid");
+const authMiddleware = require("../middlewares/authMiddleware");
 router.post("/", async (req, res) => {
   const clientId = req.body.clientId;
   const lawyerId = req.body.lawyerId;
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
     lawyer.unseenNotifications.push({
       type: "new-appointment-request",
       message: `A new appointment request has been made by ${client.name}`,
-      onClickPath: "/lawyer/appointments",
+      onClickPath: "/lawyer/lawyerAppointments",
     });
     await lawyer.save();
     await booking.save();
@@ -91,5 +92,25 @@ router.post("/rejectBooking", async function (req, res) {
     });
   }
 });
-
+router.get("/get-appointments", authMiddleware, async (req, res) => {
+  try {
+    const lawyer = await lawyerModel.findOne({ lawyerId: req.body.userId });
+    const appointments = await bookingModel
+      .find({ lawyerId: lawyer._id })
+      .populate("clientId", "name phone");
+    console.log(appointments);
+    res.status(200).send({
+      message: "Appointments fetched successfully",
+      success: true,
+      data: appointments,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: error.message,
+      success: false,
+      error,
+    });
+  }
+});
 module.exports = router;

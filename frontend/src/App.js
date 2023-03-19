@@ -18,8 +18,8 @@ import AdminLawyer from "./Pages/AdminLawyer";
 import AdminJudge from "./Pages/AdminJudge";
 import AddAdmin from "./Pages/AddAdmin";
 import AdminHome from "./Pages/AdminHome";
-import ProtectedRoute from "./components/ProtectedRoutes";
-
+import LawyersAppointments from "./Pages/LawyersAppointments";
+import LawyerProfile from "./Pages/LawyerProfile";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -62,6 +62,15 @@ function App() {
               </LawyerProtectedRoutes>
             }
           />
+          <Route
+            path="/lawyerAppointments"
+            element={
+              <LawyerProtectedRoutes>
+                <LawyersAppointments />
+              </LawyerProtectedRoutes>
+            }
+          />
+          <Route path="/lawyerProfile" element={<LawyerProfile />} />
           <Route path="/AdminClient" element={<AdminClients />} />
           <Route path="/AdminLawyer" element={<AdminLawyer />} />
           <Route path="/AdminJudge" element={<AdminJudge />} />

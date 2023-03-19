@@ -47,7 +47,10 @@ const LawyersDashboard = ({ children }) => {
                 <span style={{ animationDelay: "0.1s" }}>Cases</span>
               </button>
             </Link1>
-            <Link1 to={"#"} style={{ textDecoration: "none" }}>
+            <Link1
+              to={"/lawyerAppointments"}
+              style={{ textDecoration: "none" }}
+            >
               <button type="button">
                 <img src={appointment} alt="" />
                 <span style={{ animationDelay: "0.2s" }}>Appointments</span>
@@ -65,7 +68,7 @@ const LawyersDashboard = ({ children }) => {
                 <span style={{ animationDelay: "0.4s" }}>Notifications</span>
               </button>
             </Link1>
-            <Link1 to={"#"} style={{ textDecoration: "none" }}>
+            <Link1 to={"/lawyerProfile"} style={{ textDecoration: "none" }}>
               <button type="button">
                 <img src={people} alt="" />
                 <span style={{ animationDelay: "0.5s" }}>Accounts</span>
