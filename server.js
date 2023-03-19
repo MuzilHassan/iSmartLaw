@@ -8,6 +8,8 @@ const clientRouter = require("./routes/clientsrouter");
 const lawyerRouter = require("./routes/lawyerRouter");
 const complaintRouter = require("./routes/complaintRouter");
 const bookingRouter = require("./routes/bookingRouter");
+
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/api/client", clientRouter);
 app.use("/api/lawyer", lawyerRouter);
 app.use("/api/complaint", complaintRouter);

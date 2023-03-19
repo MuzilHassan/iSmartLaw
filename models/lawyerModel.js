@@ -54,6 +54,12 @@ const lawyerSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    profilePicture: {
+      type: String,
+    },
+    about: {
+      type: String,
+    },
   },
   {
     timestamps: true,

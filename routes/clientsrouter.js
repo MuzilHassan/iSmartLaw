@@ -66,18 +66,18 @@ router.post("/get-user-info", authMiddleware, async (req, res) => {
     const user = await clientModel.findOne({ _id: req.body.userId });
     console.log(user);
     if (!user) {
-      res.status(200).send({ message: "Auth failed", success: false });
+      return res.status(200).json({ message: "Auth failed", success: false });
     }
-
-    return res.status(200).send({
+    const data = {
+      name: user.name,
+      email: user.email,
+    };
+    return res.status(200).json({
       success: true,
-      data: {
-        name: user.name,
-        email: user.email,
-      },
+      data,
     });
   } catch (error) {
-    res.status(400).send({ success: false, message: "failed", error });
+    res.status(400).json({ success: false, message: "failed", error });
   }
 });
 module.exports = router;

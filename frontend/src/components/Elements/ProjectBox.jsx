@@ -2,13 +2,21 @@ import React from "react";
 import styled from "styled-components";
 
 export default function ProjectBox({ img, title, text, action}) {
+  console.log(img)
   return (
     <Wrapper>
       <ImgBtn className="aniamte pointer" onClick={action ? () => action() : null}>
-        <img className="radius8" src={img} alt="project" style={{height:"309px", width:'376px', objectFit:'contain'}}></img>
+        <img className="radius8" src={img} alt="project" style={{height:"309px", width:'376px', objectFit:"contain"}}></img>
       </ImgBtn>
       <h3 className="font20 extraBold">{title}</h3>
+      <div className="text-container" style={{display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 3,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',}}>
       <p className="font13">{text}</p>
+      </div>
+     
     </Wrapper>
   );
 }
@@ -24,6 +32,7 @@ const Wrapper = styled.div`
   h3 {
     padding-bottom: 10px;
   }
+ 
 `;
 const ImgBtn = styled.button`
   background-color: transparent;
@@ -32,6 +41,6 @@ const ImgBtn = styled.button`
   padding: 0px;
   margin: 0px;
   :hover > img {
-    opacity: 0.5;
+    cursor:pointer
   }
 `;

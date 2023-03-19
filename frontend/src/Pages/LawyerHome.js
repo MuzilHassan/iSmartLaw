@@ -2,6 +2,7 @@ import React from "react";
 import BlogBox from "../components/CaseCard";
 import LawyersDashboard from "../components/LawyersDashboard";
 function LawyerHome() {
+  console.log(localStorage.getItem("token"));
   return (
     <div>
       <LawyersDashboard>

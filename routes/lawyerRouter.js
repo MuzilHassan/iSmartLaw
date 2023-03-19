@@ -4,6 +4,11 @@ const lawyerModel = require("../models/lawyerModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
+const fs = require("fs");
+const path = require("path");
+
+const upload = require("../config/multer");
+
 router.post("/register", async (req, res) => {
   try {
     console.log(req.body);
@@ -31,6 +36,7 @@ router.post("/register", async (req, res) => {
       .send({ message: "Error while creating new user", success: false, err });
   }
 });
+
 router.post("/login", async (req, res) => {
   try {
     const user = await lawyerModel.findOne({ email: req.body.email });
@@ -65,10 +71,10 @@ router.post("/get-Lawyer-info", authMiddleware, async (req, res) => {
     const user = await lawyerModel.findOne({ _id: req.body.userId });
     console.log(user);
     if (!user) {
-      res.status(200).send({ message: "Auth failed", success: false });
+      return res.status(200).send({ message: "Auth failed", success: false });
     }
 
-    return res.status(200).send({
+    return res.status(200).json({
       success: true,
       data: {
         name: user.name,
@@ -119,6 +125,114 @@ router.post("/delete-all-notifications", authMiddleware, async (req, res) => {
     res.status(200).send({ success: true, message: "deleted Successfully" });
   } catch (err) {
     res.status(400).send({ success: true, message: err.message });
+  }
+});
+
+router.post(
+  "/update-profile-picture",
+
+  upload.single("ProfilePicture"),
+  authMiddleware,
+  async (req, res) => {
+    const { userId } = req.body;
+    const { filename } = req.file;
+    lawyerModel.findById(userId, (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Internal server error");
+      }
+      if (user.profilePicture) {
+        const oldFilePath = path.join(
+          __dirname,
+          "..",
+          "uploads",
+          user.profilePicture
+        );
+        fs.unlink(oldFilePath, (err) => {
+          if (err) console.log(err);
+        });
+      }
+      lawyerModel
+        .findByIdAndUpdate(userId, { profilePicture: filename }, { new: true })
+        .then((user) => {
+          res
+            .status(200)
+            .send({ user, message: "Profile picture updated successfully" });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).send("Internal server error");
+        });
+    });
+  }
+);
+
+router.get("/lawyer-info", authMiddleware, async (req, res) => {
+  const { userId } = req.body;
+  lawyerModel
+    .findById(userId)
+    .select("-password -seenNotification -unseenNotifications")
+    .exec((err, user) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message, success: false });
+      } else if (!user) {
+        res.status(404).send({ message: "User not found", success: false });
+      } else {
+        res.send({ message: "succefull", success: true, user });
+      }
+    });
+});
+router.get("/all-lawyers", async (req, res) => {
+  try {
+    const users = await lawyerModel
+      .find()
+      .select("name about profilePicture phone address");
+    if (!users) {
+      return res.status(200).json({ success: false, message: "no users" });
+    }
+    return res.status(200).json({ success: true, users });
+  } catch (error) {}
+});
+
+router.put("/update-profile", authMiddleware, async (req, res) => {
+  console.log(req.body);
+  try {
+    const validFields = [
+      "name",
+      "email",
+      "password",
+      "city",
+      "address",
+      "availabilityStatus",
+      " timings",
+      "experience",
+      "about",
+    ];
+    let updates = {};
+    for (const field of validFields) {
+      if (req.body[field]) {
+        updates[field] = req.body[field];
+      }
+    }
+
+    const user = await lawyerModel.findByIdAndUpdate(req.body.userId, updates, {
+      new: true,
+      runValidators: true,
+    });
+    console.log(user);
+    if (user) {
+      return res.status(200).json({ success: true, updated: updates });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 });
 module.exports = router;
