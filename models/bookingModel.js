@@ -21,28 +21,6 @@ const bookingSchema = new Schema({
     enum: ["Pending", "Accepted", "Rejected"],
     default: "Pending",
   },
-  messages: [
-    {
-      sender: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
-      text: {
-        type: String,
-        required: true,
-      },
-      timestamp: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
-  roomId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);

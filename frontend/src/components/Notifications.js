@@ -96,11 +96,12 @@ function Notifications() {
         <Box sx={{ padding: 2 }}>
           {value === 0 && (
             <>
-              <div className="d-flex justify-content-end">
+              <div className=" flex justify-end">
                 <Link1 to="#">
                   <Typography
                     sx={{ textDecoration: "underline" }}
                     onClick={handleDelete}
+                    className="text-red-500"
                   >
                     Delete all
                   </Typography>

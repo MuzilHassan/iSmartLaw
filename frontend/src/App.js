@@ -1,4 +1,5 @@
 import "./App.css";
+
 import { Helmet } from "react-helmet";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
@@ -8,18 +9,18 @@ import ClientSignIn from "./Pages/ClientLoginScreen";
 import LawyerSignUp from "./Pages/LawyerSignupScreen";
 import LawyerLogin from "./Pages/LawyerLoginScreen";
 import Landing from "./Pages/Landing";
-import LawyersDashboard from "./components/LawyersDashboard";
+import SideNav from "./components/LawyersDashboard/SideNav";
 import LawyerProtectedRoutes from "./components/LawyerProtectedRoutes";
 import LawyerHome from "./Pages/LawyerHome";
 import Notifications from "./components/Notifications";
-import AdminDashobard from "./components/AdminDashobard";
-import AdminClients from "./Pages/AdminClients";
-import AdminLawyer from "./Pages/AdminLawyer";
-import AdminJudge from "./Pages/AdminJudge";
-import AddAdmin from "./Pages/AddAdmin";
-import AdminHome from "./Pages/AdminHome";
+
 import LawyersAppointments from "./Pages/LawyersAppointments";
-import LawyerProfile from "./Pages/LawyerProfile";
+
+import LawyerDashboard from "./Pages/lawyer/LawyerDashboard";
+import Settings from "./Pages/lawyer/Settings";
+import Appointments from "./Pages/lawyer/Appointments";
+import Chat from "./Pages/lawyer/Chat";
+import Cases from "./Pages/lawyer/Cases";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -46,36 +47,45 @@ function App() {
           <Route path="/clientSignIn" element={<ClientSignIn />} />
           <Route path="/" element={<Landing />} />
           <Route
-            path="/LawyerHome"
+            path="/LawyerDashboard"
             element={
               <LawyerProtectedRoutes>
-                <LawyerHome />
-              </LawyerProtectedRoutes>
-            }
-          />
-          <Route path="/admin" element={<AdminDashobard />} />
-          <Route
-            path="/notifications"
-            element={
-              <LawyerProtectedRoutes>
-                <Notifications />
+                <LawyerDashboard />
               </LawyerProtectedRoutes>
             }
           />
           <Route
-            path="/lawyerAppointments"
+            path="/LawyerSettings"
             element={
               <LawyerProtectedRoutes>
-                <LawyersAppointments />
+                <Settings />
               </LawyerProtectedRoutes>
             }
           />
-          <Route path="/lawyerProfile" element={<LawyerProfile />} />
-          <Route path="/AdminClient" element={<AdminClients />} />
-          <Route path="/AdminLawyer" element={<AdminLawyer />} />
-          <Route path="/AdminJudge" element={<AdminJudge />} />
-          <Route path="/AddAdmin" element={<AddAdmin />} />
-          <Route path="/AdminHome" element={<AdminHome />} />
+          <Route
+            path="/LawyerAppointments"
+            element={
+              <LawyerProtectedRoutes>
+                <Appointments />
+              </LawyerProtectedRoutes>
+            }
+          />
+          <Route
+            path="/LawyerChats"
+            element={
+              <LawyerProtectedRoutes>
+                <Chat />
+              </LawyerProtectedRoutes>
+            }
+          />
+          <Route
+            path="/LawyerCases"
+            element={
+              <LawyerProtectedRoutes>
+                <Cases />
+              </LawyerProtectedRoutes>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

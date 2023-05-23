@@ -32,6 +32,7 @@ const lawyerSchema = new mongoose.Schema(
     },
     resetLink: {
       data: String,
+      expiresAt: 0,
       default: "",
     },
     unseenNotifications: {

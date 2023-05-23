@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
 const fs = require("fs");
 const path = require("path");
-
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 const upload = require("../config/multer");
 
 router.post("/register", async (req, res) => {
@@ -81,6 +82,12 @@ router.post("/get-Lawyer-info", authMiddleware, async (req, res) => {
         email: user.email,
         unseenNotifications: user.unseenNotifications,
         seenNotification: user.seenNotification,
+        id: user._id,
+        about: user.about,
+        phone: user.phone,
+        address: user.address,
+        license: user.license,
+        profilePicture: user.profilePicture,
       },
     });
   } catch (error) {
@@ -233,6 +240,68 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
+  }
+});
+
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const user = await lawyerModel.findOne({ email: req.body.email });
+    if (!user) {
+      return res
+        .status(200)
+        .json({ success: false, message: "User not found" });
+    }
+    const token = crypto.randomBytes(20).toString("hex");
+    user.resetLink = {
+      data: token,
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+    };
+    await user.save();
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `<p>Hello ${user.name},</p><p>You recently requested to reset your password for your Lawyer account. 
+      Please click on the link below to reset your password:</p><p><a href="${www.google.com}/reset-password/${token}">Reset Password</a></p><p>If you did not request this password reset, please ignore this email and your password will remain unchanged.</p>`,
+    };
+    await transporter.sendMail(mailOptions);
+    return res
+      .status(200)
+      .json({ success: true, message: "password reset Link has been send" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const user = await lawyerModel.findOne({
+      resetLink: {
+        data: token,
+        expiresAt: { $gt: Date.now() },
+      },
+    });
+
+    if (!user) {
+      return res
+        .status(200)
+        .json({ success: true, message: "Your token has been expired" });
+    }
+    user.password = password;
+    user.resetLink = { data: "", expiresAt: 0 };
+    await user.save();
+    res
+      .status(200)
+      .json({ success: true, message: "password changed successfully" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
 });
 module.exports = router;

@@ -96,8 +96,8 @@ router.get("/get-appointments", authMiddleware, async (req, res) => {
   try {
     const lawyer = await lawyerModel.findOne({ lawyerId: req.body.userId });
     const appointments = await bookingModel
-      .find({ lawyerId: lawyer._id })
-      .populate("clientId", "name phone");
+      .find({ lawyerId: lawyer._id, status: "Pending" })
+      .populate("clientId", "name phone email");
     console.log(appointments);
     res.status(200).send({
       message: "Appointments fetched successfully",
@@ -113,4 +113,103 @@ router.get("/get-appointments", authMiddleware, async (req, res) => {
     });
   }
 });
+router.get("/get-booked-appointments", authMiddleware, async (req, res) => {
+  try {
+    const lawyer = await lawyerModel.findOne({ lawyerId: req.body.userId });
+    const appointments = await bookingModel
+      .find({ lawyerId: lawyer._id, status: "Accepted" })
+      .populate("clientId", "name phone email");
+    console.log(appointments);
+    res.status(200).send({
+      message: "Appointments fetched successfully",
+      success: true,
+      data: appointments,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: error.message,
+      success: false,
+      error,
+    });
+  }
+});
+router.put(
+  "/change-appointment-date/:bookingId",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const booking = await bookingModel.findOneAndUpdate(
+        { _id: req.params.bookingId },
+        { $set: { date: req.body.appointmentDate } }, // Update the field name to appointmentDate
+        { new: true }
+      );
+
+      if (!booking) {
+        return res.status(404).send({
+          message: "Booking not found",
+          success: false,
+        });
+      }
+
+      res.status(200).send({
+        message: "Appointment date changed successfully",
+        success: true,
+        data: booking,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: error.message,
+        success: false,
+        error,
+      });
+    }
+  }
+);
+
+router.post("/create-appointment", authMiddleware, async (req, res) => {
+  try {
+    const { name, phoneNumber, date } = req.body;
+    const lawyerId = req.body.userId; // Obtained from authentication middleware
+    const phone = phoneNumber;
+    console.log("dhfjsld", phone);
+    // Find the client by phone number
+    const client = await clientModel
+      .findOne({
+        phone,
+      })
+      .exec();
+    console.log(client);
+    if (!client) {
+      return res.status(404).json({
+        message: "Client not found",
+        success: false,
+      });
+    }
+
+    // Create the appointment
+    const appointment = new bookingModel({
+      lawyerId,
+      clientId: client._id,
+      date,
+      status: "Accepted",
+    });
+    await appointment.save();
+
+    res.status(201).json({
+      message: "Appointment created successfully",
+      success: true,
+      data: appointment,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Failed to create appointment",
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;

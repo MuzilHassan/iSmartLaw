@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { Link as ml } from "@mui/material/Link";
+
 import { Link as Link1 } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -64,7 +64,7 @@ export default function SignIn() {
             toast.success(response.data.message);
             toast("Redirecting to home page");
             localStorage.setItem("token", response.data.data);
-            navigate("/LawyerHome");
+            navigate("/LawyerDashboard");
           } else {
             toast.error(response.data.message);
           }
