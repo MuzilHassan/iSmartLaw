@@ -8,6 +8,7 @@ const clientModel = require("../models/clientModel");
 const lawyerModel = require("../models/lawyerModel");
 const judgeModel = require("../models/judgeModel");
 const caseModel = require("../models/caseModel");
+const complaintModel = require("../models/complaintModel");
 
 router.post("/addJudge", async (req, res) => {
   try {
@@ -104,6 +105,17 @@ router.get("/get-totallawyers", async (req, res) => {
     res.status(500).send({ message: err.message, success: false, err });
   }
 });
+router.get("/get-totallcases", async (req, res) => {
+  try {
+    const totalClients = await caseModel.countDocuments();
+    res
+      .status(200)
+      .send({ message: "Total clients count", count: totalClients });
+  } catch (err) {
+    res.status(500).send({ message: err.message, success: false, err });
+  }
+});
+
 router.get("/get-clients-lawyers", async (req, res) => {
   try {
     const clients = await clientModel.find(
@@ -208,9 +220,27 @@ router.get("/cases/pending", async (req, res) => {
     res.status(500).send({ message: err.message, success: false, err });
   }
 });
+router.get("/cases/Closed", async (req, res) => {
+  try {
+    const pendingCases = await caseModel.find({ status: "Closed" });
+
+    if (pendingCases.length === 0) {
+      // If no pending cases found
+      res.status(200).send({ message: "No pending cases found", data: [] });
+    } else {
+      // If pending cases found
+      res
+        .status(200)
+        .send({ message: "Pending cases data", data: pendingCases });
+    }
+  } catch (err) {
+    res.status(500).send({ message: err.message, success: false, err });
+  }
+});
 
 router.put("/cases/:caseId/assign-judge/:serviceNumber", async (req, res) => {
   try {
+    console.log("muzil hassan");
     const caseId = req.params.caseId;
     const serviceNumber = req.params.serviceNumber;
 
@@ -226,7 +256,7 @@ router.put("/cases/:caseId/assign-judge/:serviceNumber", async (req, res) => {
     // Find the case by ID and update the judge and status fields
     const updatedCase = await caseModel.findByIdAndUpdate(
       caseId,
-      { judge: judge._id, status: "Accepted" },
+      { judgeId: judge._id, status: "Accepted" },
       { new: true }
     );
 
@@ -252,14 +282,14 @@ router.get("/cases/accepted", async (req, res) => {
       .find({ status: "Accepted" })
       .populate({
         path: "clientId lawyerId judgeId",
-        select: "name -_id -__v",
+        select: "name court -_id -__v",
       })
       .select("-clientId -lawyerId -judgeId");
 
     if (acceptedCases.length === 0) {
       return res
-        .status(404)
-        .send({ message: "No accepted cases found", success: false });
+        .status(200)
+        .send({ message: "No accepted cases found", success: true, data: [] });
     }
 
     res
@@ -291,41 +321,37 @@ router.get("/registrations", async (req, res) => {
       ]),
     ]);
 
-    const clientRegistrations = {};
-    const lawyerRegistrations = {};
-
-    for (let i = 1; i <= 12; i++) {
-      const monthName = new Date(2000, i - 1).toLocaleString("default", {
-        month: "long",
-      });
-      clientRegistrations[monthName] = 0;
-      lawyerRegistrations[monthName] = 0;
-    }
+    const clientRegistrations = Array(12).fill(0);
+    const lawyerRegistrations = Array(12).fill(0);
 
     registrations[0].forEach((registration) => {
-      const month = new Date(2000, registration._id - 1).toLocaleString(
-        "default",
-        { month: "long" }
-      );
+      const month = registration._id - 1;
       clientRegistrations[month] = registration.count;
     });
 
     registrations[1].forEach((registration) => {
-      const month = new Date(2000, registration._id - 1).toLocaleString(
-        "default",
-        { month: "long" }
-      );
+      const month = registration._id - 1;
       lawyerRegistrations[month] = registration.count;
     });
 
-    res.status(200).send({
+    const response = {
       message: "Registrations data",
       clientRegistrations,
       lawyerRegistrations,
-    });
+    };
+
+    res.status(200).send(response);
   } catch (err) {
     res.status(500).send({ message: err.message, success: false, err });
   }
 });
 
+router.get("/get-userQueries", async (req, res) => {
+  try {
+    const data = await complaintModel.find();
+    res.status(200).send({ success: true, data: data });
+  } catch (error) {
+    res.status(401).send({ success: false, message: error.message });
+  }
+});
 module.exports = router;

@@ -31,7 +31,7 @@ const caseSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Accepted", "Rejected"],
+      enum: ["Pending", "Accepted", "Rejected", "Closed"],
       default: "Pending",
     },
     nextHearing: {
