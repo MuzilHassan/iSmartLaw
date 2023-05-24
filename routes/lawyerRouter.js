@@ -138,7 +138,7 @@ router.post("/delete-all-notifications", authMiddleware, async (req, res) => {
 router.post(
   "/update-profile-picture",
 
-  upload.single("ProfilePicture"),
+  upload.single("profilePicture"),
   authMiddleware,
   async (req, res) => {
     const { userId } = req.body;

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Box, Card, CardContent, Button, Typography,} from '@mui/material';
-
+import axios from "axios"
 import Stack from '@mui/material/Stack';
 import { Grid } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 import { useSelector } from 'react-redux';
 function Profile() {
   const [image, setImage] = useState(null);
@@ -23,10 +23,25 @@ function Profile() {
     setUploading(false)
   }
   console.log(user)
-  const handleSave = () => {
-    // Save image URL to database
-    console.log(`Image URL saved: ${image}`);
-  }
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('profilePicture', image);
+     
+
+      const response = await axios.post('/api/lawyer/update-profile-picture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      console.log('Profile picture updated successfully');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
 
   return (
     <Box sx={{ width: '97%', margin: 'auto' }}>

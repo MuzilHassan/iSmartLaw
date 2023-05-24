@@ -172,14 +172,12 @@ router.post("/create-appointment", authMiddleware, async (req, res) => {
   try {
     const { name, phoneNumber, date } = req.body;
     const lawyerId = req.body.userId; // Obtained from authentication middleware
-    const phone = phoneNumber;
+
     console.log("dhfjsld", phone);
     // Find the client by phone number
-    const client = await clientModel
-      .findOne({
-        phone,
-      })
-      .exec();
+    const client = await clientModel.findOne({
+      phone: phoneNumber,
+    });
     console.log(client);
     if (!client) {
       return res.status(404).json({
