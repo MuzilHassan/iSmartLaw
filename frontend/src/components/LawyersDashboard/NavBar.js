@@ -1,6 +1,7 @@
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -17,6 +18,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import MuiAppBar from "@mui/material/AppBar";
 import { updateOpen } from "../../redux/drawerSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 const Search = styled("div")(({ theme }) => ({
@@ -67,7 +69,9 @@ const AppBar = styled(MuiAppBar, {
 
 export default function NavBar() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isDrawerOpen = useSelector((state) => state.open.open);
+  const { user } = useSelector((state) => state.user);
   console.log(isDrawerOpen);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -133,7 +137,12 @@ export default function NavBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        <IconButton
+          size="large"
+          aria-label="show 4 new mails"
+          color="inherit"
+          onClick={() => navigate("/LawyerChats")}
+        >
           <Badge badgeContent={4} color="error">
             <MailIcon />
           </Badge>
@@ -146,7 +155,7 @@ export default function NavBar() {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={user?.unseenNotifications.length} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>

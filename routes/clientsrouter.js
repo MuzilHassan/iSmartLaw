@@ -71,6 +71,9 @@ router.post("/get-user-info", authMiddleware, async (req, res) => {
     const data = {
       name: user.name,
       email: user.email,
+      unseenNotifications: user.unseenNotifications,
+      seenNotification: user.seenNotification,
+      id: user._id,
     };
     return res.status(200).json({
       success: true,

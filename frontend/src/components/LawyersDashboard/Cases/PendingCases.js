@@ -7,20 +7,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 
-import CancelIcon from "@mui/icons-material/Cancel";
-import CheckIcon from "@mui/icons-material/Check";
-import axios from "axios";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { useDispatch } from "react-redux";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import axios from "axios";
 import { showLoading, hideLoading } from "../../../redux/alertSlice";
-
-function createData(name, price, category, population, size) {
-  const density = population / size;
-  return { name, price, category, size, density };
-}
-
+import { useDispatch } from "react-redux";
+import AddCase from "./AddCase";
 const style = {
   position: "absolute",
   top: "50%",
@@ -32,12 +33,39 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const formatDate = (dateTimeString) => {
+  const options = {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
 
-export default function AppointmentsRequests() {
+  const date = new Date(dateTimeString);
+  return date.toLocaleString("en-US", options);
+};
+export default function PendingCases() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const dispatch = useDispatch();
+  const [editOpen, setEditOpen] = useState(false);
+  const handleEditOpen = (bookingId, appointmentDate) => {
+    setBookingId(bookingId);
+    setAppointmentDate(appointmentDate);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => setEditOpen(false);
   const [rows, setAppointments] = useState([]);
+
+  const [bookingId, setBookingId] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -46,42 +74,10 @@ export default function AppointmentsRequests() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleAccept = async (bookingId) => {
-    try {
-      dispatch(showLoading());
-      let res = await axios.post(
-        "/api/bookings/acceptBooking",
-        { bookingId },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      dispatch(hideLoading());
-    } catch (error) {}
-  };
-
-  const handleReject = async (bookingId) => {
-    try {
-      dispatch(showLoading());
-      let res = await axios.post(
-        "/api/bookings/rejectBooking",
-        { bookingId },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      dispatch(hideLoading());
-    } catch (error) {}
-  };
-
   const getAppointmentsData = async () => {
     try {
       dispatch(showLoading());
-      const resposne = await axios.get("/api/bookings/get-appointments", {
+      const resposne = await axios.get("/api/lawyer/cases/pending", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -94,15 +90,25 @@ export default function AppointmentsRequests() {
       dispatch(hideLoading());
     }
   };
-
   const filterData = () => {};
-
+  const deleteUser = () => {};
   useEffect(() => {
     getAppointmentsData();
     console.log(rows, "p");
   }, []);
   return (
     <>
+      <div>
+        <Modal
+          open={open}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <AddCase closeEvent={handleClose} />
+          </Box>
+        </Modal>
+      </div>
       {rows.length >= 0 && (
         <Paper
           sx={{
@@ -114,7 +120,35 @@ export default function AppointmentsRequests() {
           }}
         >
           <Box height={10} />
-          <Stack direction="row" spacing={2} className="my-2 mb-2"></Stack>
+          <Stack direction="row" spacing={2} className="my-2 mb-2">
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={rows}
+              sx={{ width: 300 }}
+              onChange={(e, v) => filterData(v)}
+              getOptionLabel={(rows) => rows.name || ""}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size="small"
+                  label="Search Appointment"
+                />
+              )}
+            />
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1 }}
+            ></Typography>
+            <Button
+              variant="contained"
+              endIcon={<AddCircleIcon />}
+              onClick={handleOpen}
+            >
+              Add
+            </Button>
+          </Stack>
           <Box height={10} />
           <TableContainer>
             <Table stickyHeader aria-label="sticky table">
@@ -149,28 +183,31 @@ export default function AppointmentsRequests() {
                         key={row.code}
                       >
                         <TableCell align="left">{row.clientId.name}</TableCell>
-                        <TableCell align="left">{row.clientId.email}</TableCell>
                         <TableCell align="left">{row.clientId.phone}</TableCell>
-                        <TableCell align="left">{row.date}</TableCell>
+                        <TableCell align="left">{row.clientId.email}</TableCell>
+                        <TableCell align="left">
+                          {formatDate(row.date)}
+                        </TableCell>
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
-                            <CheckIcon
+                            <EditIcon
                               style={{
                                 fontSize: "20px",
                                 color: "blue",
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              onClick={() => handleAccept(row._id)}
+                              // onClick={() => editUser(row.id)}
+                              onClick={() => handleEditOpen(row._id, row.date)}
                             />
-                            <CancelIcon
+                            <DeleteIcon
                               style={{
                                 fontSize: "20px",
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
                               onClick={() => {
-                                handleReject(row._id);
+                                deleteUser(row.id);
                               }}
                             />
                           </Stack>

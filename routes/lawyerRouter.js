@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const lawyerModel = require("../models/lawyerModel");
+const clientModel = require("../models/clientModel");
+const caseModel = require("../models/caseModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -9,6 +11,219 @@ const path = require("path");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const upload = require("../config/multer");
+
+router.post("/addall", async (req, res) => {
+  const lawyers = [
+    {
+      name: "Ali Hassan",
+      email: "ali.hassan@example.com",
+      password: "pass1234",
+      phone: 9876543210,
+      city: "Lahore",
+      address: "789, PQR Street",
+      license: "PQR98765",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Dedicated lawyer specializing in criminal law.",
+      totalNumberOfWonCases: 7,
+      rating: 4.3,
+      yearsOfExperience: 9,
+      bestLawerRank: 0,
+      category: "corporate",
+    },
+    {
+      name: "Ayesha Malik",
+      email: "ayesha.malik@example.com",
+      password: "pass9876",
+      phone: 1234509876,
+      city: "Islamabad",
+      address: "567, LMN Street",
+      license: "LMN54321",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Experienced family law attorney providing personalized services.",
+      totalNumberOfWonCases: 12,
+      rating: 4.8,
+      yearsOfExperience: 10,
+      bestLawerRank: 0,
+      category: "corporate",
+    },
+    {
+      name: "Usman Ahmed",
+      email: "usman.ahmed@example.com",
+      password: "usman456",
+      phone: 2345678901,
+      city: "Karachi",
+      address: "987, XYZ Street",
+      license: "XYZ23456",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about:
+        "Skilled corporate lawyer with a track record of successful mergers and acquisitions.",
+      totalNumberOfWonCases: 15,
+      rating: 4.9,
+      yearsOfExperience: 12,
+      bestLawerRank: 0,
+      category: "civil",
+    },
+    {
+      name: "Zainab Qureshi",
+      email: "zainab.qureshi@example.com",
+      password: "zainab789",
+      phone: 3456789012,
+      city: "Lahore",
+      address: "654, MNO Street",
+      license: "MNO34567",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Passionate advocate for personal injury cases.",
+      totalNumberOfWonCases: 8,
+      rating: 4.4,
+      yearsOfExperience: 7,
+      bestLawerRank: 0,
+      category: "family",
+    },
+    {
+      name: "Faisal Mahmood",
+      email: "faisal.mahmood@example.com",
+      password: "faisal321",
+      phone: 4567890123,
+      city: "Islamabad",
+      address: "321, RST Street",
+      license: "RST89012",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Experienced lawyer specializing in criminal law.",
+      totalNumberOfWonCases: 10,
+      rating: 4.7,
+      yearsOfExperience: 9,
+      bestLawerRank: 0,
+      category: "personal_injury",
+    },
+    {
+      name: "Fatima Shah",
+      email: "fatima.shah@example.com",
+      password: "fatima654",
+      phone: 5678901234,
+      city: "Karachi",
+      address: "012, GHI Street",
+      license: "GHI56789",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Dedicated advocate for family law matters.",
+      totalNumberOfWonCases: 6,
+      rating: 4.1,
+      yearsOfExperience: 5,
+      bestLawerRank: 0,
+      category: "personal_injury",
+    },
+    {
+      name: "Kamran Ali",
+      email: "kamran.ali@example.com",
+      password: "kamran123",
+      phone: 6789012345,
+      city: "Lahore",
+      address: "345, UVW Street",
+      license: "UVW67890",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Experienced corporate lawyer handling complex legal issues.",
+      totalNumberOfWonCases: 13,
+      rating: 4.9,
+      yearsOfExperience: 11,
+      bestLawerRank: 0,
+      category: "family",
+    },
+    {
+      name: "Amina Khan",
+      email: "amina.khan@example.com",
+      password: "amina987",
+      phone: 7890123456,
+      city: "Islamabad",
+      address: "901, OPQ Street",
+      license: "OPQ78901",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Passionate advocate for family law matters.",
+      totalNumberOfWonCases: 9,
+      rating: 4.3,
+      yearsOfExperience: 8,
+      bestLawerRank: 0,
+      category: "personal_injury",
+    },
+    {
+      name: "Farhan Ahmed",
+      email: "farhan.ahmed@example.com",
+      password: "farhan123",
+      phone: 8901234567,
+      city: "Karachi",
+      address: "678, XYZ Street",
+      license: "XYZ67890",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about:
+        "Skilled criminal defense attorney with a successful trial record.",
+      totalNumberOfWonCases: 11,
+      rating: 4.7,
+      yearsOfExperience: 10,
+      bestLawerRank: 0,
+      category: "corporate",
+    },
+    {
+      name: "Sadia Malik",
+      email: "sadia.malik@example.com",
+      password: "sadia987",
+      phone: 9012345678,
+      city: "Lahore",
+      address: "123, ABC Street",
+      license: "ABC90123",
+      resetLink: "",
+      unseenNotifications: [],
+      seenNotification: [],
+      caseHistory: [],
+      profilePicture: "",
+      about: "Experienced advocate specializing in personal injury cases.",
+      totalNumberOfWonCases: 7,
+      rating: 4.5,
+      yearsOfExperience: 6,
+      bestLawerRank: 0,
+      category: "corporate",
+    },
+  ];
+
+  const add = await lawyerModel.insertMany(lawyers);
+
+  res
+    .status(200)
+    .send({ message: "All lawyers created successfully", success: true });
+});
 
 router.post("/register", async (req, res) => {
   try {
@@ -38,6 +253,73 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.put("/giveranking", async (req, res) => {
+  try {
+    const categories = [
+      "civil",
+      "corporate",
+      "criminal",
+      "family",
+      "personal_injury",
+    ];
+
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+
+      // Fetch lawyers in the current category
+      const lawyers = await lawyerModel.find({ category });
+
+      // Calculate the rank based on the formula
+      lawyers.sort(
+        (a, b) =>
+          b.rating +
+          b.totalNumberOfWonCases -
+          a.rating +
+          a.totalNumberOfWonCases
+      );
+
+      // Update the bestLawerRank field
+      lawyers.forEach((lawyer, index) => {
+        lawyer.bestLawerRank = index + 1;
+      });
+
+      // Save the updated lawyer documents
+      await Promise.all(lawyers.map((lawyer) => lawyer.save()));
+
+      console.log(
+        `Best lawyer ranks updated successfully for ${category} category!`
+      );
+    }
+
+    res.status(200).send({
+      message: "Best lawyer ranks updated successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error updating best lawyer ranks in all categories:", error);
+  }
+});
+
+router.get("/search/:category", async (req, res) => {
+  let category = req.params.category;
+
+  try {
+    const lawyers = await lawyerModel
+      .find({ category })
+      .sort({ bestLawerRank: 1 })
+      .limit(10);
+
+    console.log(`Top 10 lawyers in ${category} category:`, lawyers);
+    return res.status(200).json(lawyers);
+  } catch (error) {
+    console.error(
+      `Error retrieving top lawyers in ${category} category:`,
+      error
+    );
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const user = await lawyerModel.findOne({ email: req.body.email });
@@ -46,8 +328,8 @@ router.post("/login", async (req, res) => {
         .status(200)
         .send({ message: "User Account Dosent Exits", success: false });
     }
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
-    if (!isMatch) {
+
+    if (req.body.password == user.password) {
       return res.status(200).send({
         message: "The Password you entered is incorrect",
         success: false,
@@ -192,14 +474,29 @@ router.get("/lawyer-info", authMiddleware, async (req, res) => {
 });
 router.get("/all-lawyers", async (req, res) => {
   try {
+    const perPage = 6;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * perPage;
+
     const users = await lawyerModel
       .find()
-      .select("name about profilePicture phone address");
+      .select("name about profilePicture phone address _id")
+      .skip(skip)
+      .limit(perPage);
+
+    const totalLawyers = await lawyerModel.countDocuments();
+    const totalPages = Math.ceil(totalLawyers / perPage);
+
     if (!users) {
       return res.status(200).json({ success: false, message: "no users" });
     }
-    return res.status(200).json({ success: true, users });
-  } catch (error) {}
+
+    return res
+      .status(200)
+      .json({ success: true, users, totalPages, currentPage: page });
+  } catch (error) {
+    // Handle error
+  }
 });
 
 router.put("/update-profile", authMiddleware, async (req, res) => {
@@ -304,4 +601,93 @@ router.post("/reset-password", async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+router.put("/change-password", authMiddleware, async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const user = await lawyerModel.findById(req.body.userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isPasswordMatch) {
+      return res
+        .status(401)
+        .json({ message: "Old password doesn't match", success: false });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Password changed successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Error while changing password",
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+router.post("/add-case", authMiddleware, async (req, res) => {
+  try {
+    const { clientEmail, caseType, caseDescription, date } = req.body;
+    const lawyerId = req.body.userId;
+
+    // Fetch the client ID based on the provided client email
+    const client = await clientModel.findOne({ email: clientEmail });
+    if (!client) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Client not found" });
+    }
+    const clientId = client._id;
+
+    // Create a new case
+    const newCase = new caseModel({
+      lawyerId,
+      clientId,
+      caseType,
+      caseDescription,
+      date,
+    });
+
+    // Save the case to the database
+    await newCase.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Case added successfully",
+      case: newCase,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+router.get("/cases/pending", authMiddleware, async (req, res) => {
+  try {
+    const lawyerId = req.body.userId; // Assuming the lawyer ID is available in the req.user object
+
+    const pendingCases = await caseModel.find({ lawyerId, status: "Pending" });
+
+    res.json(pendingCases);
+  } catch (error) {
+    console.error("Error while fetching pending cases:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

@@ -3,13 +3,13 @@ const router = express.Router();
 const bookingModel = require("../models/bookingModel");
 const lawyerModel = require("../models/lawyerModel");
 const clientModel = require("../models/clientModel");
-const uuid = require("uuid");
+
 const authMiddleware = require("../middlewares/authMiddleware");
-router.post("/", async (req, res) => {
-  const clientId = req.body.clientId;
-  const lawyerId = req.body.lawyerId;
-  const date = req.body.date;
-  const roomId = uuid.v4();
+router.post("/", authMiddleware, async (req, res) => {
+  const clientId = req.body.userId;
+  const lawyerId = req.body.bookingId;
+  const date = req.body.appointmentDate;
+
   console.log(clientId, lawyerId);
   try {
     const client = await clientModel.findById(clientId);
@@ -24,7 +24,6 @@ router.post("/", async (req, res) => {
       clientId,
       lawyerId,
       date,
-      roomId,
     });
     lawyer.unseenNotifications.push({
       type: "new-appointment-request",
@@ -167,25 +166,20 @@ router.put(
     }
   }
 );
-
 router.post("/create-appointment", authMiddleware, async (req, res) => {
   try {
-    const { name, phoneNumber, date } = req.body;
+    const { email, date } = req.body;
     const lawyerId = req.body.userId; // Obtained from authentication middleware
 
-    console.log("dhfjsld", phone);
-    // Find the client by phone number
-    const client = await clientModel.findOne({
-      phone: phoneNumber,
-    });
-    console.log(client);
+    // Find the client by email
+    const client = await clientModel.findOne({ email });
     if (!client) {
       return res.status(404).json({
         message: "Client not found",
         success: false,
       });
     }
-
+    console.log(client);
     // Create the appointment
     const appointment = new bookingModel({
       lawyerId,

@@ -43,23 +43,38 @@ const lawyerSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    experience: {
+    caseHistory: {
       type: Array,
       default: [],
     },
-    availabilityStatus: {
-      type: Boolean,
-      default: true,
-    },
-    timings: {
-      type: Array,
-      default: [],
-    },
+
     profilePicture: {
       type: String,
     },
+    success_ratio: {
+      type: {},
+    },
     about: {
       type: String,
+    },
+    rating: {
+      type: Number,
+    },
+    totalNumberOfWonCases: {
+      type: Number,
+      default: "",
+    },
+    yearsOfExperience: {
+      type: Array,
+      default: [],
+    },
+    bestLawerRank: {
+      type: Number,
+      default: 0,
+    },
+    category: {
+      type: String,
+      default: "",
     },
   },
   {

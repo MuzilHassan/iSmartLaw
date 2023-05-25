@@ -22,7 +22,7 @@ export default function Services() {
         <div className="container">
           <HeaderInfo>
             <h1 className="font40 extraBold"> Services</h1>
-            <p className="font13">
+            <p className="font18">
             Civil law is the body of laws that govern the rights and 
               <br />
               responsibilities of citizens and non-criminal matters, including contracts and property.
@@ -53,8 +53,7 @@ export default function Services() {
                 subtitle="Generally, family law is concerned with issues such as marriage,
                  divorce, child custody, adoption, birth, child support, and other matters
                   that concern families. This branch of civil law does not necessarily require that a person has committed a civil wrong. 
-                  The family court is responsible for dividing up property and finances during a divorce,
-                 as well as establishing child custody, child support, and spousal support."
+                 "
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
@@ -78,9 +77,7 @@ export default function Services() {
             <div style={{ width: "300px", marginLeft: "15px" }}>
               <FullButton title="Register as Client" action={() => navigate("/clientSignup")} border />
             </div>
-            <div style={{ width: "300px" ,marginLeft: "15px"}}>
-              <FullButton title="Register as Judge" action={() => alert("clicked")} />
-            </div>
+           
            
           </ButtonsRow>
         </AddLeft>

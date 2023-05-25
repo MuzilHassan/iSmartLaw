@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VideoCallIcon from "@mui/icons-material/VideoCall";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -49,6 +50,12 @@ const formatDate = (dateTimeString) => {
   return date.toLocaleString("en-US", options);
 };
 export default function AppointmentsList() {
+  const handleCall = () => {
+    window.open(
+      "https://muziljohn.github.io/video_chat/videochat.html",
+      "_blank"
+    );
+  };
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
   const [open, setOpen] = useState(false);
@@ -129,7 +136,7 @@ export default function AppointmentsList() {
           </Box>
         </Modal>
       </div>
-      {rows.length > 0 && (
+      {rows.length >= 0 && (
         <Paper
           sx={{
             width: "98%",
@@ -229,6 +236,14 @@ export default function AppointmentsList() {
                               onClick={() => {
                                 deleteUser(row.id);
                               }}
+                            />
+                            <VideoCallIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "darkred",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleCall}
                             />
                           </Stack>
                         </TableCell>

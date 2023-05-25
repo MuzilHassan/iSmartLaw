@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import OpenCases from "./OpenCases";
+import PendingCases from "./PendingCases";
 const StyledTabs = styled((props) => (
   <Tabs
     {...props}
@@ -106,13 +107,15 @@ export default function CasesTabs() {
           aria-label="basic tabs example"
         >
           <StyledTab label="Open Cases" {...a11yProps(0)} />
-          <StyledTab label="Closed cases" {...a11yProps(1)} />
+          <StyledTab label="Pending cases" {...a11yProps(1)} />
         </StyledTabs>
       </Box>
       <TabPanel value={value} index={0}>
         <OpenCases />
       </TabPanel>
-      <TabPanel value={value} index={1}></TabPanel>
+      <TabPanel value={value} index={1}>
+        <PendingCases />
+      </TabPanel>
     </Box>
   );
 }

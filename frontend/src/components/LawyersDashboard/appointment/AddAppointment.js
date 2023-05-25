@@ -11,17 +11,18 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 import axios from "axios";
+
 function AddAppointment({ closeEvent }) {
-  const [clientsName, setClientsName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [appointmentDateTime, setAppointmentDateTime] = useState(null);
 
-  const isSubmitDisabled = !clientsName || !phoneNumber || !appointmentDateTime;
+  const isSubmitDisabled = !email || !appointmentDateTime;
+
   const handleAddAppointment = async () => {
     try {
       const response = await axios.post(
         "/api/bookings/create-appointment/",
-        { name: clientsName, phoneNumber, date: appointmentDateTime },
+        { email, date: appointmentDateTime },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -31,8 +32,7 @@ function AddAppointment({ closeEvent }) {
       // Handle successful response
       console.log(response.data);
       // Reset form fields
-      setClientsName("");
-      setPhoneNumber("");
+      setEmail("");
       setAppointmentDateTime(null);
       // Close the modal or perform any other action
       closeEvent();
@@ -41,6 +41,7 @@ function AddAppointment({ closeEvent }) {
       console.log(error.message);
     }
   };
+
   return (
     <>
       <Box sx={{ m: 1 }}>
@@ -57,25 +58,14 @@ function AddAppointment({ closeEvent }) {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
-              id="outlined-basic"
-              label="Clients Name"
+              id="email"
+              label="Email"
               variant="outlined"
               size="small"
               sx={{ minWidth: "100%" }}
-              value={clientsName}
-              onChange={(e) => setClientsName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              id="outlined-basic"
-              label="Phone Number"
-              variant="outlined"
-              size="small"
-              sx={{ minWidth: "100%" }}
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              type="number"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
             />
           </Grid>
           <Grid item xs={12}>

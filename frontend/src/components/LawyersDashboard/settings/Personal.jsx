@@ -1,22 +1,48 @@
 import React from 'react';
 import { Box, Card, CardContent, Button, Typography, TextField } from '@mui/material';
 import { Grid } from '@mui/material';
+import axios from 'axios';
 
 function Personal() {
   const [name, setName] = React.useState('');
   const [location, setLocation] = React.useState('');
-  const [eduDetail, setEduDetail] = React.useState('');
+  const [license, setLicense] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
-  const [profileLink, setProfileLink] = React.useState('');
+  const [bio, setBio] = React.useState('');
   const [address, setAddress] = React.useState('');
 
-  const handlePersonalSubmit = () => {
-    console.log('Personal info submitted!');
+  const handlePersonalSubmit = async () => {
+    try {
+      const response = await axios.put('/api/update-profile', {
+        userId: 'yourUserId', // Replace with the actual user ID
+        name,
+        city: location,
+        address,
+        about: license,
+      });
+      console.log(response.data);
+      // Handle successful response
+    } catch (error) {
+      console.log(error.message);
+      // Handle error
+    }
   };
 
-  const handleContactSubmit = () => {
-    console.log('Contact info submitted!');
+  const handleContactSubmit = async () => {
+    try {
+      const response = await axios.put('/api/update-profile', {
+        userId: 'yourUserId', // Replace with the actual user ID
+        email,
+        phoneNumber,
+        address,
+      });
+      console.log(response.data);
+      // Handle successful response
+    } catch (error) {
+      console.log(error.message);
+      // Handle error
+    }
   };
 
   return (
@@ -41,16 +67,16 @@ function Personal() {
                 />
                 <TextField
                   label="License"
-                  value={eduDetail}
-                  onChange={(e) => setEduDetail(e.target.value)}
+                  value={license}
+                  onChange={(e) => setLicense(e.target.value)}
                 />
-                
-                  <TextField
+                {/* Additional fields */}
+                <TextField
                   label="Bio"
                   multiline
                   rows={4}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
                 />
                 <Button variant="contained" onClick={handlePersonalSubmit}>
                   Save Personal Info
@@ -76,19 +102,19 @@ function Personal() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-                 <TextField
+                {/* Additional fields */}
+                <TextField
                   label="Mobile Number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-                  <TextField
+                <TextField
                   label="Address"
                   value={address}
                   multiline
                   rows={4}
                   onChange={(e) => setAddress(e.target.value)}
                 />
-              
                 <Button variant="contained" onClick={handleContactSubmit}>
                   Save Contact Info
                 </Button>

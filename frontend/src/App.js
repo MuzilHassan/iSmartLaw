@@ -12,15 +12,21 @@ import Landing from "./Pages/Landing";
 import SideNav from "./components/LawyersDashboard/SideNav";
 import LawyerProtectedRoutes from "./components/LawyerProtectedRoutes";
 import LawyerHome from "./Pages/LawyerHome";
-import Notifications from "./components/Notifications";
+//import Notifications from "./components/Notifications";
 
 import LawyersAppointments from "./Pages/LawyersAppointments";
-
+//lawyers
 import LawyerDashboard from "./Pages/lawyer/LawyerDashboard";
 import Settings from "./Pages/lawyer/Settings";
 import Appointments from "./Pages/lawyer/Appointments";
 import Chat from "./Pages/lawyer/Chat";
 import Cases from "./Pages/lawyer/Cases";
+import Notifications from "./Pages/lawyer/Notifications";
+
+//clients
+import ClientChat from "./Pages/client/ClientChat";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import ClientAppointments from "./Pages/client/ClientAppointments";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -45,6 +51,22 @@ function App() {
           <Route path="/lawyerSignIn" element={<LawyerLogin />} />
           <Route path="/clientSignup" element={<ClientSignUp />} />
           <Route path="/clientSignIn" element={<ClientSignIn />} />
+          <Route
+            path="/clientChat"
+            element={
+              <ProtectedRoute>
+                <ClientChat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ClientAppointment"
+            element={
+              <ProtectedRoute>
+                <ClientAppointments />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/" element={<Landing />} />
           <Route
             path="/LawyerDashboard"
@@ -83,6 +105,14 @@ function App() {
             element={
               <LawyerProtectedRoutes>
                 <Cases />
+              </LawyerProtectedRoutes>
+            }
+          />
+          <Route
+            path="/LawyerNotifications"
+            element={
+              <LawyerProtectedRoutes>
+                <Notifications />
               </LawyerProtectedRoutes>
             }
           />

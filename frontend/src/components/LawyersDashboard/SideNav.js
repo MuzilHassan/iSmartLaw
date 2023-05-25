@@ -238,6 +238,7 @@ export default function SideNav() {
               justifyContent: open ? "initial" : "center",
               px: 2.5,
             }}
+            onClick={() => navigate("/LawyerNotifications")}
           >
             <ListItemIcon
               sx={{

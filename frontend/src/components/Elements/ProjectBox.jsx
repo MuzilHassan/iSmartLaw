@@ -1,14 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 
-export default function ProjectBox({ img, title, text, action}) {
-  console.log(img)
+export default function ProjectBox({ img, title, text, action,id, rank, category}) {
+  console.log(id)
   return (
     <Wrapper>
       <ImgBtn className="aniamte pointer" onClick={action ? () => action() : null}>
-        <img className="radius8" src={img} alt="project" style={{height:"309px", width:'376px', objectFit:"contain"}}></img>
+        <img className="radius8" src={img} alt="project" style={{height:"309px", width:'330px'}}></img>
       </ImgBtn>
       <h3 className="font20 extraBold">{title}</h3>
+      {
+        rank ? (
+
+          <p className="font10 italic">Rank: {rank} in {category} law</p>
+        ) : ''
+      }
       <div className="text-container" style={{display: '-webkit-box',
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: 3,

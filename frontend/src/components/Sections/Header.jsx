@@ -13,7 +13,7 @@ export default function Header() {
       <LeftSide className="flexCenter">
         <div>
           <h1 className="extraBold font60">Online Booking system for Attorneys</h1>
-          <HeaderP className="font13 semiBold">
+          <HeaderP className="font18 semiBold">
           if you have a legal issue or you just need consultation on your legal or business inquiry in any practice area and industry, 
           you can consult with an expertized Lawyer or/and a Professionals on our website.
            You can book online on a much easier and faster way wherever you are either your virtual or your real-life meeting just
