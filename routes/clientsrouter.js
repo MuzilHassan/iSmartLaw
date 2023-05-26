@@ -4,7 +4,7 @@ const clientModel = require("../models/clientModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middlewares/authMiddleware");
-
+const caseModel = require("../models/caseModel");
 router.post("/register", async (req, res) => {
   try {
     console.log(req.body);
@@ -83,4 +83,32 @@ router.post("/get-user-info", authMiddleware, async (req, res) => {
     res.status(400).json({ success: false, message: "failed", error });
   }
 });
+
+router.get("/cases", authMiddleware, async (req, res) => {
+  try {
+    const clientId = req.body.userId;
+    const cases = await caseModel
+      .find({
+        clientId,
+        status: "Accepted",
+      })
+      .populate("lawyerId", "name")
+      .populate("judgeId", "name")
+      .exec();
+
+    const formattedCases = cases.map((caseItem) => ({
+      lawyerName: caseItem.lawyerId.name,
+      judgeName: caseItem.judgeId.name,
+      nextHearingDate: caseItem.nextHearing,
+      previousRemarks: caseItem.hearingComment[0],
+    }));
+
+    console.log(formattedCases);
+    res.json(formattedCases);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;

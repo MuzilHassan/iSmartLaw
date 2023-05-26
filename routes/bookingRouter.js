@@ -112,6 +112,26 @@ router.get("/get-appointments", authMiddleware, async (req, res) => {
     });
   }
 });
+router.get("/get-client-appointments", authMiddleware, async (req, res) => {
+  try {
+    const appointments = await bookingModel
+      .find({ clientId: req.body.userId })
+      .populate("lawyerId", "name phone email");
+    console.log(appointments);
+    res.status(200).send({
+      message: "Appointments fetched successfully",
+      success: true,
+      data: appointments,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: error.message,
+      success: false,
+      error,
+    });
+  }
+});
 router.get("/get-booked-appointments", authMiddleware, async (req, res) => {
   try {
     const lawyer = await lawyerModel.findOne({ lawyerId: req.body.userId });

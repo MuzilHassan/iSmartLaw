@@ -8,8 +8,6 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -21,8 +19,8 @@ import axios from "axios";
 import { showLoading, hideLoading } from "../../redux/alertSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ButtonBase from '@mui/material/ButtonBase';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ButtonBase from "@mui/material/ButtonBase";
 
 const formatDate = (dateTimeString) => {
   const options = {
@@ -38,17 +36,14 @@ const formatDate = (dateTimeString) => {
   return date.toLocaleString("en-US", options);
 };
 
-export default function ClientAppointments() {
+export default function ClientCases() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(7);
   const [rows, setAppointments] = useState([]);
   const dispatch = useDispatch();
   const history = useNavigate();
   const handleCall = () => {
-    window.open(
-      "https://muziljohn.github.io/video_chat/videochat.html",
-      "_blank"
-    );
+    window.open("https://muziljohn.github.io/video_chat/videochat.html", "_blank");
   };
 
   const isWithinTimeRange = (dateTimeString) => {
@@ -73,17 +68,14 @@ export default function ClientAppointments() {
   const getAppointmentsData = async () => {
     try {
       dispatch(showLoading());
-      const resposne = await axios.get(
-        "/api/bookings/get-client-appointments",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await axios.get("/api/client/cases", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       dispatch(hideLoading());
-      if (resposne.data.success) {
-        setAppointments(resposne.data.data);
+      if (response.data.success) {
+        setAppointments(response.data.data);
       }
     } catch (error) {
       dispatch(hideLoading());
@@ -99,10 +91,9 @@ export default function ClientAppointments() {
       display="flex"
       flexDirection="column"
       alignItems="center"
-     
-      p={2}
-      bgcolor="#f2f2f2"
-      height="100vh"
+      padding="16px"
+      backgroundColor="#f2f2f2"
+      minHeight="100vh"
     >
       <Box mb={2}>
         <ButtonBase
@@ -110,18 +101,18 @@ export default function ClientAppointments() {
           startIcon={<ArrowBackIcon />}
           onClick={() => history(-1)}
           sx={{
-            backgroundColor: '#f2f2f2',
-            borderRadius: '8px',
-            padding: '12px 24px',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            color: '#333',
-            border: 'none',
-            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-            transition: 'background-color 0.3s ease',
-            outline:'none',
-            '&:hover': {
-              backgroundColor: '#e0e0e0',
+            backgroundColor: "#f2f2f2",
+            borderRadius: "8px",
+            padding: "12px 24px",
+            fontWeight: "bold",
+            fontSize: "16px",
+            color: "#333",
+            border: "none",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+            transition: "background-color 0.3s ease",
+            outline: "none",
+            "&:hover": {
+              backgroundColor: "#e0e0e0",
             },
           }}
         >
@@ -129,21 +120,29 @@ export default function ClientAppointments() {
         </ButtonBase>
       </Box>
 
-      <Typography variant="h5" component="h2" align="center" mb={2} style={{ color: '#333', fontWeight: 'bold' }}>
-        Client Appointments
+      <Typography variant="h5" component="h2" align="center" mb={2} style={{ color: "#333", fontWeight: "bold" }}>
+        Case Details
       </Typography>
 
-      <Paper elevation={3} style={{ borderRadius: '8px', width: '100%' }}>
-        <TableContainer style={{ maxHeight: '400px' }}>
+      <Paper elevation={3} style={{ borderRadius: "8px", width: "100%" }}>
+        <TableContainer style={{ maxHeight: "400px" }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>Lawyer Name</TableCell>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>Phone Number</TableCell>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>Email</TableCell>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>Date and Time</TableCell>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>status</TableCell>
-                <TableCell align="left" style={{ fontWeight: 'bold' }}>Video Call</TableCell>
+                <TableCell align="left" style={{ fontWeight: "bold" }}>
+                  Lawyer Name
+                </TableCell>
+                <TableCell align="left" style={{ fontWeight: "bold" }}>
+                 judge Number
+                </TableCell>
+                <TableCell align="left" style={{ fontWeight: "bold" }}>
+                  next hearing
+                </TableCell>
+                
+                <TableCell align="left" style={{ fontWeight: "bold" }}>
+                  Previous remarks
+                </TableCell>
+               
               </TableRow>
             </TableHead>
             <TableBody>
@@ -151,31 +150,12 @@ export default function ClientAppointments() {
                 ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    <TableCell align="left">{row.lawyerId.name}</TableCell>
-                    <TableCell align="left">{row.lawyerId.phone}</TableCell>
-                    <TableCell align="left">{row.lawyerId.email}</TableCell>
-                    <TableCell align="left">
-                      {formatDate(row.date)}
-                    </TableCell>
-                    <TableCell align="left">{row.status}</TableCell>
-                    <TableCell align="left">
-                      <Stack spacing={2} direction="row">
-                        <VideoCallIcon
-                          style={{
-                            fontSize: "20px",
-                            color: isWithinTimeRange(row.date)
-                              ? "darkred"
-                              : "gray",
-                            cursor: isWithinTimeRange(row.date)
-                              ? "pointer"
-                              : "default",
-                          }}
-                          onClick={
-                            isWithinTimeRange(row.date) ? handleCall : null
-                          }
-                        />
-                      </Stack>
-                    </TableCell>
+                    <TableCell align="left">{row.lawyerName}</TableCell>
+                    <TableCell align="left">{row.judgeName}</TableCell>
+                    <TableCell align="left">{formatDate(row. nextHearingDate)}</TableCell>
+                    
+                    <TableCell align="left">{row.PreviousRemarks}</TableCell>
+                    
                   </TableRow>
                 ))}
             </TableBody>

@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RequestAppointment from './RequestAppointment';
 import { Button, Modal } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 function Details(props) {
   const [editOpen, setEditOpen] = useState(false);
+  const { user } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
   const handleEditOpen = () => {
-    setEditOpen(true);
+    if (user) {
+      setEditOpen(true);
+    } else {
+      navigate('/clientSignIn');
+    }
   };
-  console.log(props.id)
-  const handleEditClose = () => setEditOpen(false);
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
 
   return (
     <>

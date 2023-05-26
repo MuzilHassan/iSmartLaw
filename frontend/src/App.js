@@ -11,6 +11,7 @@ import LawyerLogin from "./Pages/LawyerLoginScreen";
 import Landing from "./Pages/Landing";
 import SideNav from "./components/LawyersDashboard/SideNav";
 import LawyerProtectedRoutes from "./components/LawyerProtectedRoutes";
+
 import LawyerHome from "./Pages/LawyerHome";
 //import Notifications from "./components/Notifications";
 
@@ -27,6 +28,8 @@ import Notifications from "./Pages/lawyer/Notifications";
 import ClientChat from "./Pages/client/ClientChat";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import ClientAppointments from "./Pages/client/ClientAppointments";
+import ClientCases from "./Pages/client/ClientCases";
+import ClientPayment from "./Pages/client/ClientPayment";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -64,6 +67,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ClientAppointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ClientCase"
+            element={
+              <ProtectedRoute>
+                <ClientCases />
               </ProtectedRoute>
             }
           />
@@ -114,6 +125,15 @@ function App() {
               <LawyerProtectedRoutes>
                 <Notifications />
               </LawyerProtectedRoutes>
+            }
+          />
+
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoute>
+                <ClientPayment />
+              </ProtectedRoute>
             }
           />
         </Routes>

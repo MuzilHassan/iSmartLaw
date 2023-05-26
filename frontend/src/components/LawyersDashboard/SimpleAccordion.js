@@ -14,7 +14,7 @@ export default function SimpleAccordion() {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>Accordion 1</Typography>
+          <Typography>case 1</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
@@ -29,7 +29,7 @@ export default function SimpleAccordion() {
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>Accordion 2</Typography>
+          <Typography>case 2</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>
@@ -44,7 +44,7 @@ export default function SimpleAccordion() {
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>Accordion 3</Typography>
+          <Typography>case 3</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>

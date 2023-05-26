@@ -106,7 +106,7 @@ function AddCase({ closeEvent }) {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DemoContainer components={['DateTimePicker']}>
                 <DateTimePicker
-                  label="Appointment date and time"
+                  label=""
                   value={appointmentDateTime}
                   onChange={(newValue) => setAppointmentDateTime(newValue)}
                 />

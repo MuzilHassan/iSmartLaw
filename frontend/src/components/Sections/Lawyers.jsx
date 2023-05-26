@@ -179,7 +179,7 @@ className="col-xs-12 col-sm-4 col-md-4 col-lg-4 mt-2">
             onHide={() => setModalShow(false)}
             img={
               selectedLawyer &&
-              `http://localhost:5000/uploads/${selectedLawyer.profilePicture}`
+              selectedLawyer.profilePicture?`http://localhost:5000/uploads/${selectedLawyer.profilePicture}`:picture1
             }
             lawyer={selectedLawyer}
             name={selectedLawyer?.name}
@@ -217,9 +217,7 @@ className="col-xs-12 col-sm-4 col-md-4 col-lg-4 mt-2">
                 <div style={{ width: "190px" }}>
                   <FullButton title="Login as Lawyer" action={() =>navigate("/lawyerSignIn") } />
                 </div>
-                <div style={{ width: "190px", marginLeft: "15px" }}>
-                  <FullButton title="Login as Judge" action={() => alert("clicked")} border />
-                </div>
+               
                 <div style={{ width: "190px" ,marginLeft: "15px"}}>
                   <FullButton title="Login as Client" action={() => navigate("/clientSignIn")} />
                 </div>

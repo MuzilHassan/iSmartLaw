@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
@@ -13,7 +13,46 @@ import NavBar from '../../components/LawyersDashboard/NavBar';
 import SimpleAccordion from '../../components/LawyersDashboard/SimpleAccordion';
 import { BarChart } from '../../components/LawyersDashboard/BarChart';
 import "../../css/lawyerDash.css"
+ import axios from 'axios';
+ import { useSelector } from 'react-redux';
 const LawyerDashboard = () => {
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalRevenue1, setTotalRevenue1] = useState(0);
+  const [totalRevenue2, setTotalRevenue2] = useState(0);
+  const {user}=useSelector((state)=>state.user);
+  console.log(user);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+      
+    
+        const [pendingPaymentsResponse, paidPaymentsResponse] = await Promise.all([
+          axios.get(`/api/lawyer/payments/pending/${user.id}`),
+          axios.get(`/api/lawyer/payments/paid/${user.id}}`)
+        ]);
+
+        // Extract the total pending amount and total paid amount
+        const totalPendingAmount = pendingPaymentsResponse.data.totalPendingAmount || 0;
+        const totalPaidAmount = paidPaymentsResponse.data.totalPaidAmount || 0;
+
+        // Update the state variables
+        setTotalEarnings(totalPendingAmount + totalPaidAmount);
+        setTotalOrders(totalPendingAmount); // Assuming the pending amount represents the total orders
+        setTotalRevenue1(totalPaidAmount);
+        setTotalRevenue2(totalPaidAmount); // Update this value as per your requirement
+
+      } catch (error) {
+        console.error("Error while fetching payment data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
   return (
     <div className='bgColor'>
     <NavBar/>
@@ -32,7 +71,7 @@ const LawyerDashboard = () => {
         </div>
         <Typography gutterBottom variant="h5" component="div" 
      >
-          $546.00
+          {totalEarnings}
         </Typography>
         <Typography gutterBottom variant='body2' component={'div'} sx={{color: '#ccd1d1'}}>
           Total Earnings
@@ -47,10 +86,10 @@ const LawyerDashboard = () => {
           <ShoppingBagIcon className="iconStyle3" />
         </div>
         <Typography gutterBottom variant="h5" component="div">
-          $233.00
+         {totalOrders}
         </Typography>
         <Typography gutterBottom variant='body2' component={'div'} sx={{color: '#ccd1d1'}}>
-          Total Orders
+          Amount Pendings
         </Typography>
         
       </CardContent>
@@ -67,8 +106,8 @@ const LawyerDashboard = () => {
         <StorefrontIcon/>
        </div>
         <div className='paddingAll'>
-          <span className='priceTitle'>$300k</span><br />
-          <span className='priceSubTitle'>total revenue</span>
+          <span className='priceTitle'>{totalRevenue1}</span><br />
+          <span className='priceSubTitle'>total amount received</span>
         </div>
         </Stack>
     </Card>

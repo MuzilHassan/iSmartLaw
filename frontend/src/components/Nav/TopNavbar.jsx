@@ -88,9 +88,9 @@ export default function TopNavbar() {
                     <DropdownContent>
                       <DropdownLink to="/clientChat">Chat</DropdownLink>
                       <DropdownLink to="/ClientAppointment">Appointments</DropdownLink>
-                      <DropdownLink to="/ClientsPayment">Payments</DropdownLink>
+                      <DropdownLink to="/payment">Payments</DropdownLink>
                       <DropdownLink to="/ClientCase">Case</DropdownLink>
-                      <DropdownLink to="/ClientProfile">Profile</DropdownLink>
+                      
                     </DropdownContent>
                   )}
                 </DropdownMenu>

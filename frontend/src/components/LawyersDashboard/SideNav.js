@@ -7,7 +7,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-
+import LoginIcon from "@mui/icons-material/Login";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
@@ -22,8 +22,9 @@ import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import ViewCompactAltIcon from "@mui/icons-material/ViewCompactAlt";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../../redux/userSlice";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -77,7 +78,7 @@ export default function SideNav() {
   const theme = useTheme();
   const navigate = useNavigate();
   const open = useSelector((state) => state.open.open);
-
+  const dispatch = useDispatch();
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -183,53 +184,7 @@ export default function SideNav() {
             <ListItemText primary={"Chat"} sx={{ opacity: open ? 1 : 0 }} />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding sx={{ display: "block" }}>
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? "initial" : "center",
-              px: 2.5,
-            }}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : "auto",
-                justifyContent: "center",
-              }}
-            >
-              <ViewCompactAltIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary={"Kanban Board"}
-              sx={{ opacity: open ? 1 : 0 }}
-            />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding sx={{ display: "block" }}>
-          <ListItemButton
-            sx={{
-              minHeight: 48,
-              justifyContent: open ? "initial" : "center",
-              px: 2.5,
-            }}
-            onClick={() => navigate("/")}
-          >
-            <ListItemIcon
-              sx={{
-                minWidth: 0,
-                mr: open ? 3 : "auto",
-                justifyContent: "center",
-              }}
-            >
-              <DocumentScannerIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary={"Documents"}
-              sx={{ opacity: open ? 1 : 0 }}
-            />
-          </ListItemButton>
-        </ListItem>
+
         <Divider />
         <ListItem disablePadding sx={{ display: "block" }}>
           <ListItemButton
@@ -274,6 +229,30 @@ export default function SideNav() {
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary={"Settings"} sx={{ opacity: open ? 1 : 0 }} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding sx={{ display: "block" }}>
+          <ListItemButton
+            sx={{
+              minHeight: 48,
+              justifyContent: open ? "initial" : "center",
+              px: 2.5,
+            }}
+            onClick={() => {
+              localStorage.clear();
+              dispatch(setUser(undefined));
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: open ? 3 : "auto",
+                justifyContent: "center",
+              }}
+            >
+              <LoginIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Logout"} sx={{ opacity: open ? 1 : 0 }} />
           </ListItemButton>
         </ListItem>
       </Drawer>

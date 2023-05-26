@@ -110,10 +110,7 @@ function Profile() {
                     <PhoneIcon sx={{mr:1}}/>
                     <Typography variant="subtitle1" p={3} fontSize={22}> {user?.phone}</Typography>
                   </Box>
-                  <Box sx={{display:'flex', alignItems:'center', justifyContent:"start", mt:2,borderBottom: '2px solid #dcdcdc'}}>
-                    <LanguageIcon sx={{mr:1}}/>
-                    <Typography variant="subtitle1" p={3} fontSize={22}>www.johndoe.com</Typography>
-                  </Box>
+                 
                
                 </Stack>
             </CardContent>

@@ -83,9 +83,10 @@ export default function PendingCases() {
         },
       });
       dispatch(hideLoading());
-      if (resposne.data.success) {
-        setAppointments(resposne.data.data);
-      }
+
+      setAppointments(resposne.data);
+
+      console.log(rows, resposne.data);
     } catch (error) {
       dispatch(hideLoading());
     }
@@ -166,9 +167,6 @@ export default function PendingCases() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Date and Time
                   </TableCell>
-                  <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Actions
-                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -182,35 +180,11 @@ export default function PendingCases() {
                         tabIndex={-1}
                         key={row.code}
                       >
-                        <TableCell align="left">{row.clientId.name}</TableCell>
-                        <TableCell align="left">{row.clientId.phone}</TableCell>
-                        <TableCell align="left">{row.clientId.email}</TableCell>
+                        <TableCell align="left">{row.clientName}</TableCell>
+                        <TableCell align="left">{row.clientPhone}</TableCell>
+                        <TableCell align="left">{row.clientEmail}</TableCell>
                         <TableCell align="left">
-                          {formatDate(row.date)}
-                        </TableCell>
-                        <TableCell align="left">
-                          <Stack spacing={2} direction="row">
-                            <EditIcon
-                              style={{
-                                fontSize: "20px",
-                                color: "blue",
-                                cursor: "pointer",
-                              }}
-                              className="cursor-pointer"
-                              // onClick={() => editUser(row.id)}
-                              onClick={() => handleEditOpen(row._id, row.date)}
-                            />
-                            <DeleteIcon
-                              style={{
-                                fontSize: "20px",
-                                color: "darkred",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                deleteUser(row.id);
-                              }}
-                            />
-                          </Stack>
+                          {formatDate(row.createdAt)}
                         </TableCell>
                       </TableRow>
                     );

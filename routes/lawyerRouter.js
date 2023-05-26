@@ -11,7 +11,7 @@ const path = require("path");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const upload = require("../config/multer");
-
+const paymentModel = require("../models/paymentModel");
 router.post("/addall", async (req, res) => {
   const lawyers = [
     {
@@ -679,13 +679,125 @@ router.post("/add-case", authMiddleware, async (req, res) => {
 
 router.get("/cases/pending", authMiddleware, async (req, res) => {
   try {
-    const lawyerId = req.body.userId; // Assuming the lawyer ID is available in the req.user object
+    const lawyerId = req.body.userId;
 
-    const pendingCases = await caseModel.find({ lawyerId, status: "Pending" });
+    const pendingCases = await caseModel
+      .find({ lawyerId, status: "Pending" })
+      .populate("clientId", "name email phone ")
+      .exec();
 
-    res.json(pendingCases);
+    const formattedCases = pendingCases.map((caseItem) => ({
+      clientName: caseItem.clientId.name,
+      clientEmail: caseItem.clientId.email,
+      clientPhone: caseItem.clientId.phone,
+      createdAt: caseItem.createdAt,
+      // Include other case details if needed
+    }));
+
+    res.json(formattedCases);
   } catch (error) {
     console.error("Error while fetching pending cases:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/cases/details", authMiddleware, async (req, res) => {
+  try {
+    const lawyerId = req.body.userId;
+
+    const caseDetails = await caseModel
+      .find({ lawyerId })
+      .populate("judgeId", "name court courtAddress")
+      .populate("clientId", "name")
+      .select(" nextHearing hearingComment")
+      .exec();
+
+    const formattedCases = caseDetails.map((caseItem) => ({
+      judgeName: caseItem.judgeId.name,
+      court: caseItem.court,
+      courtAddress: caseItem.courtAddress,
+      hearingDate: caseItem.nextHearing,
+      clientName: caseItem.clientId.name,
+      previousRemarks: caseItem.hearingComment,
+    }));
+
+    res.json(formattedCases);
+  } catch (error) {
+    console.error("Error while fetching case details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/cases/latest", authMiddleware, async (req, res) => {
+  try {
+    const lawyerId = req.body.userId;
+
+    const pendingCases = await caseModel
+      .find({ lawyerId, status: "Pending" })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .select("caseDescription")
+      .exec();
+
+    const descriptions = pendingCases.map((caseItem) => caseItem.description);
+
+    res.json(descriptions);
+  } catch (error) {
+    console.error("Error while fetching pending cases:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+router.get("/payments/paid/:id", authMiddleware, async (req, res) => {
+  try {
+    console.log(req.params);
+    const lawyerId = req.params.id;
+    const paidAmount = await paymentModel
+      .aggregate([
+        {
+          $match: { lawyerId, status: "Paid" },
+        },
+        {
+          $group: {
+            _id: null,
+            totalAmount: { $sum: "$amount" },
+          },
+        },
+      ])
+      .exec();
+
+    const totalPaidAmount = paidAmount.length ? paidAmount[0].totalAmount : 0;
+
+    res.json({ totalPaidAmount });
+  } catch (error) {
+    console.error("Error while fetching total paid amount:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+router.get("/payments/pending/:id", authMiddleware, async (req, res) => {
+  try {
+    const lawyerId = req.params.id;
+
+    const pendingAmount = await paymentModel
+      .aggregate([
+        {
+          $match: { lawyerId, status: "Pending" },
+        },
+        {
+          $group: {
+            _id: null,
+            totalAmount: { $sum: "$amount" },
+          },
+        },
+      ])
+      .exec();
+
+    const totalPendingAmount = pendingAmount.length
+      ? pendingAmount[0].totalAmount
+      : 0;
+
+    res.json({ totalPendingAmount });
+  } catch (error) {
+    console.error("Error while fetching total pending amount:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
