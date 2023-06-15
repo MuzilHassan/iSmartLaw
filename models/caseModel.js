@@ -15,7 +15,7 @@ const caseSchema = new Schema(
     },
     judgeId: {
       type: Schema.Types.ObjectId,
-      ref: "clientModel",
+      ref: "judgeModel",
     },
     caseType: {
       type: String,
@@ -36,6 +36,10 @@ const caseSchema = new Schema(
     },
     nextHearing: {
       type: Date,
+    },
+    caseNumber: {
+      type: Number,
+      unique: true,
     },
     hearingComment: {
       type: Array,

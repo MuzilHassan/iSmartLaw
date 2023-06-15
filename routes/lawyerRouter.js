@@ -322,14 +322,15 @@ router.get("/search/:category", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log(req.body);
     const user = await lawyerModel.findOne({ email: req.body.email });
     if (!user) {
       return res
         .status(200)
         .send({ message: "User Account Dosent Exits", success: false });
     }
-
-    if (req.body.password == user.password) {
+    console.log(user);
+    if (req.body.password != user.password) {
       return res.status(200).send({
         message: "The Password you entered is incorrect",
         success: false,
@@ -654,6 +655,20 @@ router.post("/add-case", authMiddleware, async (req, res) => {
     }
     const clientId = client._id;
 
+    let caseNumber;
+    let isUnique = false;
+
+    // Loop until a unique case number is generated
+    while (!isUnique) {
+      caseNumber = Math.floor(100000 + Math.random() * 900000);
+
+      // Check if the case number already exists in the database
+      const existingCase = await caseModel.findOne({ caseNumber });
+      if (!existingCase) {
+        isUnique = true;
+      }
+    }
+
     // Create a new case
     const newCase = new caseModel({
       lawyerId,
@@ -661,6 +676,7 @@ router.post("/add-case", authMiddleware, async (req, res) => {
       caseType,
       caseDescription,
       date,
+      caseNumber, // Assign the generated case number
     });
 
     // Save the case to the database

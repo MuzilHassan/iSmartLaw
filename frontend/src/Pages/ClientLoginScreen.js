@@ -16,13 +16,22 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { styled } from "@mui/system";
+
 import { useNavigate } from "react-router-dom";
 
 import { showLoading, hideLoading } from "../redux/alertSlice";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
+const CustomTextField = styled(TextField)({
+  "& input:-webkit-autofill": {
+    WebkitTextFillColor: "blue", // Set the text color to blue
+  },
+  "& input:-webkit-autofill::first-line": {
+    fontSize: "inherit", // Reset the font size to match the original style
+  },
+});
 function Copyright(props) {
   return (
     <Typography
@@ -46,6 +55,7 @@ const theme = createTheme();
 export default function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const schema = Yup.object({
     email: Yup.string().email("please enter a Valid Email"),
     password: Yup.string(),
@@ -130,9 +140,9 @@ export default function SignIn() {
               component="form"
               onSubmit={formik.handleSubmit}
               validate
-              sx={{ mt: 1 }}
+              sx={{ mt: 1, color: "blue" }}
             >
-              <TextField
+              <CustomTextField
                 margin="normal"
                 required
                 fullWidth
@@ -145,7 +155,7 @@ export default function SignIn() {
                 autoComplete="email"
                 autoFocus
               />
-              <TextField
+              <CustomTextField
                 margin="normal"
                 required
                 fullWidth

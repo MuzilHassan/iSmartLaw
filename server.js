@@ -15,6 +15,7 @@ const messagesRouter = require("./routes/messagesRouter");
 const imagesRouter = require("./routes/imagesRouter");
 const adminRouter = require("./routes/adminRouter");
 const paymentRouter = require("./routes/paymentRouter");
+const judgeRouter = require("./routes/judgeRouter");
 app.use(cors());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/api/client", clientRouter);
@@ -26,6 +27,7 @@ app.use("/api/messages", messagesRouter);
 app.use("/file", imagesRouter);
 app.use("/payment", paymentRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/judge", judgeRouter);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
