@@ -163,7 +163,7 @@ export default function ClientAppointments() {
                         <VideoCallIcon
                           style={{
                             fontSize: "20px",
-                            color: isWithinTimeRange(row.date)
+                            color: isWithinTimeRange(row.date)  && row.status=="Accepted"
                               ? "darkred"
                               : "gray",
                             cursor: isWithinTimeRange(row.date)
@@ -171,7 +171,7 @@ export default function ClientAppointments() {
                               : "default",
                           }}
                           onClick={
-                            isWithinTimeRange(row.date) ? handleCall : null
+                             handleCall 
                           }
                         />
                       </Stack>

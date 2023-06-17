@@ -1,184 +1,195 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
+import React, { useEffect, useState } from "react";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import TablePagination from "@mui/material/TablePagination";
 
-function createData(name, calories, fat, carbs, protein, price, history) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history,
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import axios from "axios";
+import { showLoading, hideLoading } from "../../../redux/alertSlice";
+import { useDispatch } from "react-redux";
+
+const formatDate = (dateTimeString) => {
+  const options = {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
   };
-}
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                History
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                    <TableCell align="right">Hearing Comment</TableCell>{" "}
-                    {/* Add hearing comment column */}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                      <TableCell align="right">
-                        {historyRow.hearingComment}
-                      </TableCell>{" "}
-                      {/* Display hearing comment */}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
-
-Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-        hearingComment: PropTypes.string.isRequired, // Add hearing comment prop type
-      })
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
+  const date = new Date(dateTimeString);
+  return date.toLocaleString("en-US", options);
 };
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99, [
-    {
-      date: "2020-01-05",
-      customerId: "11091700",
-      amount: 3,
-      hearingComment: "Comment 1", // Add hearing comment
-    },
-    {
-      date: "2020-01-02",
-      customerId: "Anonymous",
-      amount: 1,
-      hearingComment: "Comment 2", // Add hearing comment
-    },
-  ]),
-  // ... Add more rows
-];
+export default function PendingCases() {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const dispatch = useDispatch();
+  const [editOpen, setEditOpen] = useState(false);
+  const handleEditOpen = (bookingId, appointmentDate) => {
+    setBookingId(bookingId);
+    setAppointmentDate(appointmentDate);
+    setEditOpen(true);
+  };
 
-export default function OpenCases() {
-  // ... Previous code
+  const handleEditClose = () => setEditOpen(false);
+  const [rows, setAppointments] = useState([]);
 
-  const rowsPerPageOptions = [5, 10, 25];
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(rowsPerPageOptions[0]);
+  const [bookingId, setBookingId] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
+  const getAppointmentsData = async () => {
+    try {
+      dispatch(showLoading());
+      const response = await axios.get("/api/lawyer/cases/Accepted", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      dispatch(hideLoading());
+
+      setAppointments(response.data);
+
+      console.log(rows, response.data);
+    } catch (error) {
+      dispatch(hideLoading());
+    }
+  };
+
+  const filterData = (v) => {
+    if (v) {
+      setAppointments([v]);
+    } else {
+      setAppointments([]);
+      getAppointmentsData();
+    }
+  };
+  useEffect(() => {
+    getAppointmentsData();
+  }, []);
+
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row) => (
-              <Row key={row.name} row={row} />
-            ))}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={rowsPerPageOptions}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </TableContainer>
+    <>
+      {rows.length >= 0 && (
+        <Paper
+          sx={{
+            width: "98%",
+            overflow: "hidden",
+            padding: "12px",
+            border: "none",
+            boxShadow: "none",
+          }}
+        >
+          <Box height={10} />
+          <Stack direction="row" spacing={2} className="my-2 mb-2">
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={rows}
+              sx={{ width: 300 }}
+              onChange={(e, v) => filterData(v)}
+              getOptionLabel={(rows) => rows.caseNumber || ""}
+              renderInput={(params) => (
+                <TextField {...params} size="small" label="Search Cases" />
+              )}
+            />
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1 }}
+            ></Typography>
+          </Stack>
+          <Box height={10} />
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Judge Name
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Court
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Case Description
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Case Number
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Client Name
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Hearing Comments
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row._id}
+                      >
+                        <TableCell align="left">{row.judgeId.name}</TableCell>
+                        <TableCell align="left">{row.judgeId.court}</TableCell>
+                        <TableCell align="left">
+                          {row.caseDescription}
+                        </TableCell>
+                        <TableCell align="left">{row.caseNumber}</TableCell>
+                        <TableCell align="left">{row.clientId.name}</TableCell>
+                        <TableCell align="left">
+                          {row.hearingComment &&
+                            row.hearingComment.map((comment, index) => (
+                              <div key={index}>
+                                {index + 1} : {comment}
+                              </div>
+                            ))}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      )}
+    </>
   );
 }

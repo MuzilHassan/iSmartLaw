@@ -501,7 +501,7 @@ router.get("/all-lawyers", async (req, res) => {
 });
 
 router.put("/update-profile", authMiddleware, async (req, res) => {
-  console.log(req.body);
+  console.log("gewaa");
   try {
     const validFields = [
       "name",
@@ -605,7 +605,9 @@ router.post("/reset-password", async (req, res) => {
 
 router.put("/change-password", authMiddleware, async (req, res) => {
   try {
+    console.log("bayanggu");
     const { oldPassword, newPassword } = req.body;
+
     const user = await lawyerModel.findById(req.body.userId);
 
     if (!user) {
@@ -614,18 +616,15 @@ router.put("/change-password", authMiddleware, async (req, res) => {
         .json({ message: "User not found", success: false });
     }
 
-    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-
+    const isPasswordMatch = oldPassword == user.password;
+    console.log(oldPassword, newPassword, user.password);
     if (!isPasswordMatch) {
       return res
-        .status(401)
+        .status(201)
         .json({ message: "Old password doesn't match", success: false });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    user.password = hashedPassword;
+    user.password = newPassword;
     await user.save();
 
     res
@@ -744,10 +743,10 @@ router.get("/cases/details", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/cases/latest", authMiddleware, async (req, res) => {
+router.get("/cases/latest/:id", authMiddleware, async (req, res) => {
   try {
-    const lawyerId = req.body.userId;
-
+    const lawyerId = req.params.id;
+    console.log(lawyerId, "hayaa hai waa");
     const pendingCases = await caseModel
       .find({ lawyerId, status: "Pending" })
       .sort({ createdAt: -1 })
@@ -818,4 +817,22 @@ router.get("/payments/pending/:id", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/cases/Accepted", authMiddleware, async (req, res) => {
+  try {
+    console.log("coming here");
+    const lawyerId = req.body.userId;
+
+    const caseDetails = await caseModel
+      .find({ lawyerId, status: "Accepted" })
+      .populate("judgeId", "name court courtAddress")
+      .populate("clientId", "name")
+      .select(" nextHearing hearingComment caseNumber caseDescription")
+      .exec();
+
+    res.json(caseDetails);
+  } catch (error) {
+    console.error("Error while fetching case details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 module.exports = router;

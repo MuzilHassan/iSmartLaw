@@ -102,7 +102,14 @@ export default function AppointmentsList() {
       dispatch(hideLoading());
     }
   };
-  const filterData = () => {};
+  const filterData = (v) => {
+    if (v) {
+      setAppointments([v]);
+    } else {
+      setAppointments([]);
+      getAppointmentsData();
+    }
+  };
   const deleteUser = () => {};
   useEffect(() => {
     getAppointmentsData();
@@ -154,7 +161,7 @@ export default function AppointmentsList() {
               options={rows}
               sx={{ width: 300 }}
               onChange={(e, v) => filterData(v)}
-              getOptionLabel={(rows) => rows.name || ""}
+              getOptionLabel={(rows) => formatDate(rows.date) || ""}
               renderInput={(params) => (
                 <TextField
                   {...params}

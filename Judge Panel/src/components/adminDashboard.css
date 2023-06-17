@@ -1,0 +1,84 @@
+  button {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .Sidebar {
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #f8f9fa;
+    transition: width 0.4s;
+    
+  }
+  
+  
+  
+  .Sidebar-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+  }
+  
+  .Sidebar-header {
+    display: flex;
+    align-items: center;
+    height: 72px;
+    padding: 0 2rem 0 0;
+    justify-content: center;
+    background: rgba(150, 146, 146, 0.1);
+    
+  }
+  
+  
+  
+  
+  
+  .Sidebar-logo {
+    height: 70px;
+    width: 100%;
+    object-fit:cover
+   
+  }
+  
+  .Sidebar-menu {
+    display: grid;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    height: 60px;
+    font-family: "Poppins";
+    font-size: 16px;
+    font-weight: 200;
+    letter-spacing: 2px;
+    line-height: 1;
+    padding: 0 25px;
+  }
+  
+ .has-border {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(77, 56, 56, 0.12);
+    margin-bottom: 2rem
+  }
+  
+  .Sidebar-menu > button > img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .Sidebar-menu > button > span {
+    color:black;
+    font-weight: 500;
+  }
+
+
+

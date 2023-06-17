@@ -57,7 +57,9 @@ export default function SignIn() {
   const dispatch = useDispatch();
 
   const schema = Yup.object({
-    email: Yup.string().email("please enter a Valid Email"),
+    email: Yup.string()
+      .email("please enter a Valid Email")
+      .max(40, "should not greater than 40"),
     password: Yup.string(),
   });
   const formik = useFormik({

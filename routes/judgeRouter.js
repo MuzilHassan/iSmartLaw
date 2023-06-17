@@ -14,7 +14,8 @@ router.post("/login", async (req, res, next) => {
       user.password
     );
     console.log(isPasswordCorrect, req.body.password);
-    if (!isPasswordCorrect) return next(createError(404, "User not found!"));
+    if (!isPasswordCorrect)
+      return res.status(404).json({ message: "User not found!" });
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -108,6 +109,24 @@ router.get("/closedCases/:id", async (req, res) => {
       .populate("judgeId", "court");
 
     res.status(200).json(cases);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+router.post("/addComment/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { comment } = req.body;
+
+    const data = await caseModel.findById(id);
+    if (!data) {
+      return res.status(404).json({ message: "Case not found" });
+    }
+
+    data.hearingComment.push(comment);
+    await data.save();
+
+    res.status(200).json({ message: "Comment added successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

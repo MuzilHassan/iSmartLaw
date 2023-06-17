@@ -23,7 +23,7 @@ export default function LawyerSignUp() {
   const phoneRegExp = "^((\\+92)?(0092)?(92)?(0)?)(3)([0-9]{9})$";
 
   const schema = Yup.object({
-    email: Yup.string().email("please enter a Valid Email"),
+    email: Yup.string().email("please enter a Valid Email").max(20),
     password: Yup.string().min(8, "password is not secure"),
     name: Yup.string(),
     city: Yup.string(),

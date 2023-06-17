@@ -9,7 +9,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 function AddAppointment({ closeEvent }) {
@@ -29,7 +29,7 @@ function AddAppointment({ closeEvent }) {
           },
         }
       );
-      // Handle successful response
+      toast.success("New appointment added successfully");
       console.log(response.data);
       // Reset form fields
       setEmail("");
@@ -37,7 +37,7 @@ function AddAppointment({ closeEvent }) {
       // Close the modal or perform any other action
       closeEvent();
     } catch (error) {
-      // Handle error
+      toast.error(error.message);
       console.log(error.message);
     }
   };

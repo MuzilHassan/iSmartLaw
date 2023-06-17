@@ -23,7 +23,9 @@ export default function ClientSignUp() {
   const phoneRegExp = "^((\\+92)?(0092)?(92)?(0)?)(3)([0-9]{9})$";
 
   const schema = Yup.object({
-    email: Yup.string().email("please enter a Valid Email"),
+    email: Yup.string()
+      .email("please enter a Valid Email")
+      .max(40, "should not be greater the 40"),
     password: Yup.string().min(8, "password is not secure"),
     name: Yup.string(),
     city: Yup.string(),
@@ -65,7 +67,7 @@ export default function ClientSignUp() {
     const dataa = new FormData(event.currentTarget);
     const dat = {
       name: dataa.get("name").min(2, "please enter your name"),
-      email: dataa.get("email").email("please enter a valid email"),
+      email: dataa.get("email").email("please enter a valid email").max(40),
       password: dataa.get("password").min(8, "password is not secure"),
       phone: dataa.get("phone"),
       city: dataa.get("city"),

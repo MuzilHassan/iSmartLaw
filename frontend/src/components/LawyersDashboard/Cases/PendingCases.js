@@ -128,7 +128,7 @@ export default function PendingCases() {
               options={rows}
               sx={{ width: 300 }}
               onChange={(e, v) => filterData(v)}
-              getOptionLabel={(rows) => rows.name || ""}
+              getOptionLabel={(rows) => rows.clientName || ""}
               renderInput={(params) => (
                 <TextField
                   {...params}

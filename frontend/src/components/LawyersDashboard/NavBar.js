@@ -19,6 +19,7 @@ import MuiAppBar from "@mui/material/AppBar";
 import { updateOpen } from "../../redux/drawerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import Popover from "@mui/material/Popover";
 import PopupState, { bindTrigger, bindPopover } from "material-ui-popup-state";
 const Search = styled("div")(({ theme }) => ({
@@ -143,7 +144,7 @@ export default function NavBar() {
           color="inherit"
           onClick={() => navigate("/LawyerChats")}
         >
-          <Badge badgeContent={4} color="error">
+          <Badge badgeContent={0} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -154,6 +155,7 @@ export default function NavBar() {
           size="large"
           aria-label="show 17 new notifications"
           color="inherit"
+          onClick={() => navigate("/LawyerNotifications")}
         >
           <Badge badgeContent={user?.unseenNotifications.length} color="error">
             <NotificationsIcon />
@@ -217,8 +219,9 @@ export default function NavBar() {
               size="large"
               aria-label="show 4 new mails"
               color="inherit"
+              onClick={() => navigate("/LawyerChats")}
             >
-              <Badge badgeContent={4} color="error">
+              <Badge color="error">
                 <MailIcon />
               </Badge>
             </IconButton>
@@ -229,9 +232,12 @@ export default function NavBar() {
                     size="large"
                     aria-label="show 17 new notifications"
                     color="inherit"
-                    {...bindTrigger(popupState)}
+                    onClick={() => navigate("/LawyerNotifications")}
                   >
-                    <Badge badgeContent={17} color="error">
+                    <Badge
+                      badgeContent={user?.unseenNotifications.length}
+                      color="error"
+                    >
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>

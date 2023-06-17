@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Box, Grid, TextField, Button, Typography } from '@mui/material';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isFormDisabled, setIsFormDisabled] = useState(true);
 
   const handleChange = (event, setValue) => {
     setValue(event.target.value);
@@ -36,15 +38,22 @@ function ChangePassword() {
         );
 
         if (response.status === 200) {
-          console.log(response.data.message); // Password changed successfully
+          console.log(response.data.message);
+          toast.success('Password changed successfully');
         } else {
-          console.error(response.data.message); // Error message from the backend
+          toast.error("Old password doesn't match");
         }
       } catch (error) {
-        console.error('Error while changing password', error);
+        toast.error('Error while changing password');
       }
     }
   };
+
+  // Check if any of the fields are empty
+  const isAnyFieldEmpty = currentPassword.trim() === '' || newPassword.trim() === '' || confirmPassword.trim() === '';
+
+  // Disable form submission when any of the fields are empty or the passwords don't match
+  const isSubmitDisabled = isAnyFieldEmpty || newPassword !== confirmPassword;
 
   return (
     <Box sx={{ width: '90%', margin: 'auto' }}>
@@ -82,7 +91,7 @@ function ChangePassword() {
           </Grid>
           <Grid item xs={12}>
             {error && <Box sx={{ color: 'red', marginBottom: '1rem' }}>{error}</Box>}
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" disabled={isSubmitDisabled}>
               Change Password
             </Button>
           </Grid>

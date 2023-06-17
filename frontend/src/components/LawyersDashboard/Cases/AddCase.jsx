@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import axios from 'axios';
-
+import {toast} from "react-hot-toast"
 function AddCase({ closeEvent }) {
   const [clientEmail, setClientEmail] = useState('');
   const [caseType, setCaseType] = useState('');
@@ -36,7 +36,7 @@ function AddCase({ closeEvent }) {
           },
         }
       );
-      // Handle successful response
+      toast.success("New case Request submitted succssfully")
       console.log(response.data);
       // Reset form fields
       setClientEmail('');
@@ -46,9 +46,9 @@ function AddCase({ closeEvent }) {
       // Close the modal or perform any other action
       closeEvent();
     } catch (error) {
-      // Handle error
+      
       console.log(error.message);
-      setError('Error while adding a new case');
+      toast.error('Error while adding a new case');
     }
   };
 

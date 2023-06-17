@@ -20,6 +20,7 @@ const LawyerDashboard = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalRevenue1, setTotalRevenue1] = useState(0);
   const [totalRevenue2, setTotalRevenue2] = useState(0);
+  const [latestCases,setLatestCases]=useState([])
   const {user}=useSelector((state)=>state.user);
   console.log(user);
 
@@ -28,21 +29,24 @@ const LawyerDashboard = () => {
       try {
       
     
-        const [pendingPaymentsResponse, paidPaymentsResponse] = await Promise.all([
+        const [pendingPaymentsResponse, paidPaymentsResponse,caseLatest] = await Promise.all([
           axios.get(`/api/lawyer/payments/pending/${user.id}`),
-          axios.get(`/api/lawyer/payments/paid/${user.id}}`)
+          axios.get(`/api/lawyer/payments/paid/${user.id}}`),
+          axios.get(`/api/lawyer/cases/latest/${user.id}}`),
+          
         ]);
 
-        // Extract the total pending amount and total paid amount
+        
         const totalPendingAmount = pendingPaymentsResponse.data.totalPendingAmount || 0;
         const totalPaidAmount = paidPaymentsResponse.data.totalPaidAmount || 0;
 
         // Update the state variables
         setTotalEarnings(totalPendingAmount + totalPaidAmount);
-        setTotalOrders(totalPendingAmount); // Assuming the pending amount represents the total orders
+        setTotalOrders(totalPendingAmount); 
         setTotalRevenue1(totalPaidAmount);
-        setTotalRevenue2(totalPaidAmount); // Update this value as per your requirement
-
+        setTotalRevenue2(totalPaidAmount); 
+        setLatestCases(caseLatest.data)
+        console.log(caseLatest)
       } catch (error) {
         console.error("Error while fetching payment data:", error);
       }
@@ -51,7 +55,7 @@ const LawyerDashboard = () => {
     fetchData();
   }, []);
 
-
+ console.log(latestCases,"124")
 
   return (
     <div className='bgColor'>
@@ -136,7 +140,7 @@ const LawyerDashboard = () => {
          <div className='paddingAll'>
          <span className='priceTitle'>Latest Cases</span><br />
          </div>
-          <SimpleAccordion/>
+          <SimpleAccordion case={latestCases}/>
          </CardContent>
       </Card>
         </Grid>

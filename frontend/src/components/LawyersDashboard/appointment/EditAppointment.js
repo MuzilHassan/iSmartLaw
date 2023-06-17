@@ -8,6 +8,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 function EditAppointment({ closeEvent, bookingId, appointmentDate }) {
@@ -40,7 +41,7 @@ function EditAppointment({ closeEvent, bookingId, appointmentDate }) {
           },
         }
       );
-      // Handle successful response
+      toast.success("Date and time changed successfully");
       closeEvent();
       console.log(response.data);
     } catch (error) {

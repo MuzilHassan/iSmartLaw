@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Card, CardContent, Button, Typography, TextField } from '@mui/material';
 import { Grid } from '@mui/material';
 import axios from 'axios';
-
+import { toast } from 'react-hot-toast';
 function Personal() {
   const [name, setName] = React.useState('');
   const [location, setLocation] = React.useState('');
@@ -14,25 +14,30 @@ function Personal() {
 
   const handlePersonalSubmit = async () => {
     try {
-      const response = await axios.put('/api/update-profile', {
-        userId: 'yourUserId', // Replace with the actual user ID
+      const response = await axios.put('/api/lawyer/update-profile', {
         name,
         city: location,
         address,
         about: license,
+      },  {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem("user")}`,
+        },
       });
+      toast.success("Personal Details updated successfully")
       console.log(response.data);
       // Handle successful response
     } catch (error) {
       console.log(error.message);
-      // Handle error
+      toast.error(error.message)
     }
   };
 
   const handleContactSubmit = async () => {
     try {
-      const response = await axios.put('/api/update-profile', {
-        userId: 'yourUserId', // Replace with the actual user ID
+      const response = await axios.put('/api/lawyer/update-profile', {
+      
         email,
         phoneNumber,
         address,
